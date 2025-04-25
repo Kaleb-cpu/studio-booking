@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@parcel/css": "^1.14.0",
     "cors": "^2.8.5",
     "date-fns": "^4.1.0",
     "google-auth-library": "^9.15.1",
