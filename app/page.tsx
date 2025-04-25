@@ -1,23 +1,24 @@
-// app/page.tsx
-import BookingForm from "@/components/BookingForm";
+import Image from "next/image";
+import Link from "next/link";
 
-export default function Home() {
+export default function HomePage() {
   return (
-    <main className="min-h-screen flex flex-col items-center justify-center p-6 bg-gradient-to-br from-black via-zinc-900 to-gray-900 text-white">
-  <h1 className="text-4xl md:text-6xl font-bold mb-4 text-center">
-    Book Your Studio Session 🎙️
-  </h1>
-
-  <div className="mb-10 max-w-xl">
-    <p className="text-lg text-zinc-300">
-      But one thing is needed, and Mary has chosen that good part, which will not be taken away from her.”
-    </p>
-    <p className="text-sm text-zinc-400 italic text-right mt-2">Luke 10:42</p>
-  </div>
-
-  <BookingForm />
-</main>
-
-
+    <div className="relative h-screen w-full">
+      <Image
+        src="/studio.jpg"
+        alt="Studio"
+        fill
+        priority
+        className="object-cover z-0"
+      />
+      <div className="absolute inset-0 bg-black bg-opacity-60 flex flex-col items-center justify-center text-white text-center px-4 z-10">
+        <h1 className="text-5xl font-bold mb-6 drop-shadow-xl">Welcome to Kaleb’s Studio</h1>
+        <Link href="/book">
+          <button className="bg-green-500 hover:bg-green-600 text-black font-semibold px-8 py-4 text-xl rounded-xl shadow-lg">
+            Book a Session
+          </button>
+        </Link>
+      </div>
+    </div>
   );
 }
