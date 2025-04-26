@@ -18,6 +18,9 @@ if (process.env.SERVICE_ACCOUNT_JSON) {
   keyFile = JSON.parse(readFileSync(keyPath, "utf-8"));
 }
 
+console.log("GOOGLE_CALENDAR_ID:", process.env.GOOGLE_CALENDAR_ID?.slice(0, 5), "..."); // just a preview
+console.log("Has SERVICE_ACCOUNT_JSON?", !!process.env.SERVICE_ACCOUNT_JSON);
+
 
 // Create JWT auth client
 const auth = new JWT({
