@@ -12,6 +12,7 @@
     "@parcel/css": "^1.14.0",
     "cors": "^2.8.5",
     "date-fns": "^4.1.0",
+    "framer-motion": "^12.9.2",
     "google-auth-library": "^9.15.1",
     "googleapis": "^148.0.0",
     "luxon": "^3.6.1",

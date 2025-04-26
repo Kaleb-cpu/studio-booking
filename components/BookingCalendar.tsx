@@ -3,23 +3,23 @@
 import React, { useEffect, useState } from "react";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
-import "./calendar.css"; // for custom colors
+import "./calendar.css"; // your custom styling
 
 type BusyRange = { start: string; end: string };
 
 export default function BookingCalendar({
   onSelectDate,
+  selectedDate, // ✅ accept this from parent
 }: {
   onSelectDate: (date: Date) => void;
+  selectedDate: Date | null;
 }) {
   const [busyRanges, setBusyRanges] = useState<BusyRange[]>([]);
-  const [date, setDate] = useState<Date | null>(null);
 
   useEffect(() => {
     fetch("/api/calendar/busy")
       .then((res) => res.json())
       .then((data) => {
-        // Check if data has the busyRanges array
         if (data?.busy) {
           setBusyRanges(data.busy);
         }
@@ -33,18 +33,19 @@ export default function BookingCalendar({
     const startHour = date.getHours();
     const isWithinHours = startHour >= 8 && startHour <= 21;
 
-    // Check if busyRanges is defined and not empty before performing checks
-    return !busyRanges.some((range) => {
-      const start = new Date(range.start);
-      const end = new Date(range.end);
-      return date >= start && date < end;
-    }) && isWithinHours;
+    return (
+      !busyRanges.some((range) => {
+        const start = new Date(range.start);
+        const end = new Date(range.end);
+        return date >= start && date < end;
+      }) && isWithinHours
+    );
   };
 
   const tileClassName = ({ date, view }: { date: Date; view: string }) => {
     if (view === "month") {
       const dateOnly = new Date(date);
-      dateOnly.setHours(12); // Avoid timezone issues
+      dateOnly.setHours(12); // timezone safe
 
       const isPast = dateOnly < new Date();
       const unavailable = busyRanges.some((range) => {
@@ -52,13 +53,16 @@ export default function BookingCalendar({
         return start.toDateString() === dateOnly.toDateString();
       });
 
+      if (selectedDate && dateOnly.toDateString() === selectedDate.toDateString()) {
+        return "tile-selected"; // ✅ NEW: highlight selected date
+      }
+
       if (isPast || unavailable) return "tile-unavailable";
       return "tile-available";
     }
   };
 
   const handleDateChange = (value: Date) => {
-    setDate(value);
     onSelectDate(value);
   };
 
@@ -66,7 +70,7 @@ export default function BookingCalendar({
     <div>
       <Calendar
         onChange={handleDateChange}
-        value={date}
+        value={selectedDate || new Date()} // fallback if null
         tileClassName={tileClassName}
       />
     </div>

@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { calculatePrice } from "@/lib/calculatePrice";
 import BookingCalendar from "@/components/BookingCalendar";
 import NavBar from "./NavBar";
+import { motion } from "framer-motion";
 
 const TIME_SLOTS = [
   "08:00 AM",
@@ -25,6 +26,7 @@ const TIME_SLOTS = [
 
 export default function BookingForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [loadingTimes, setLoadingTimes] = useState(false);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [service, setService] = useState("null");
@@ -53,19 +55,20 @@ export default function BookingForm() {
     if (selectedDate && selectedTime) {
       const [time, modifier] = selectedTime.split(" ");
       let [hours, minutes] = time.split(":").map(Number);
+  
       if (modifier === "PM" && hours !== 12) {
         hours += 12;
       }
       if (modifier === "AM" && hours === 12) {
         hours = 0;
       }
-
+  
       const combined = new Date(selectedDate);
       combined.setHours(hours);
       combined.setMinutes(minutes);
       combined.setSeconds(0);
       combined.setMilliseconds(0);
-
+  
       setDateTime(combined.toISOString());
     }
   }, [selectedDate, selectedTime]);
@@ -75,6 +78,8 @@ export default function BookingForm() {
       console.error("Invalid date selected!");
       return;
     }
+
+    setLoadingTimes(true);
 
     try {
       const res = await fetch("/api/calendar/busy", {
@@ -94,6 +99,8 @@ export default function BookingForm() {
       console.error(error);
       setBusyTimes([]); // fallback: assume everything is available
       setAvailableTimeSlots(TIME_SLOTS); // fallback: show all times
+    } finally {
+      setLoadingTimes(false);
     }
   }
 
@@ -144,12 +151,6 @@ export default function BookingForm() {
 
   const handleTimeSelection = (time: string) => {
     setSelectedTime(time);
-
-    if (selectedDate) {
-      const formattedDate = selectedDate.toISOString().split("T")[0]; // e.g., "2025-04-29"
-      const finalDateTime = `${formattedDate}T${time}:00`; // e.g., "2025-04-29T10:00:00"
-      setDateTime(finalDateTime);
-    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -160,17 +161,16 @@ export default function BookingForm() {
     }
 
     setIsSubmitting(true);
-    
-    try {
 
+    try {
       const res = await fetch("/api/book", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name, email, service, dateTime, songCount }),
       });
-      
+
       const data = await res.json();
-      
+
       if (res.ok) {
         setName("");
         setEmail("");
@@ -179,10 +179,9 @@ export default function BookingForm() {
         setSongCount(1);
         router.push("/success");
       } else {
-    }
+      }
     } catch (error) {
       console.error("Submission error:", error);
-
     } finally {
       setIsSubmitting(false);
     }
@@ -223,117 +222,183 @@ export default function BookingForm() {
   return (
     <>
       <NavBar />
-      <form
-        onSubmit={handleSubmit}
-        className="bg-zinc-800 p-6 rounded-2xl shadow-xl w-full max-w-lg space-y-4 mt-20"
-      >
-        {/* Name Field */}
-        <div>
-          <label htmlFor="name" className="block text-white">
-            Your Name
-          </label>
-          <input
-            id="name"
-            className="w-full px-4 py-2 mt-2 bg-zinc-700 rounded-md text-white"
-            placeholder="Enter your full name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            required
-          />
-        </div>
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-zinc-900 to-zinc-800 px-4">
+        <motion.form
+          initial={{ opacity: 0, y: 50 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, ease: "easeOut" }}
+          onSubmit={handleSubmit}
+          className="bg-zinc-800/80 backdrop-blur-md p-8 rounded-3xl shadow-2xl w-full max-w-lg space-y-6 mt-20 border border-zinc-700"
+        >
+          {/* Title */}
+          <h1 className="text-center text-3xl font-bold text-white font-serif mb-6">
+            Book Your Session
+          </h1>
 
-        {/* Email Field */}
-        <div>
-          <label htmlFor="email" className="block text-white">
-            Email
-          </label>
-          <input
-            id="email"
-            className="w-full px-4 py-2 mt-2 bg-zinc-700 rounded-md text-white"
-            placeholder="Enter your email address"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            type="email"
-            required
-          />
-        </div>
+          {/* Name Field */}
+          {/* Name Field */}
+<div className="relative">
+  <input
+    id="name"
+    className="peer w-full px-4 py-3 bg-zinc-700 text-white rounded-lg placeholder-transparent
+      focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-offset-2 focus:ring-offset-zinc-800
+      focus:shadow-[0_0_15px_rgba(34,197,94,0.6)] transition-all duration-200"
+    placeholder="Your Name"
+    value={name}
+    onChange={(e) => setName(e.target.value)}
+    required
+  />
+  <label
+    htmlFor="name"
+    className="absolute left-4 top-2 text-sm text-gray-400 peer-focus:top-1 peer-focus:text-xs peer-focus:text-green-400 peer-placeholder-shown:top-3.5 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-500 transition-all font-sans"
+  >
+    Your Name
+  </label>
+</div>
 
-        {/* Service Selection */}
-        <div>
-          <label htmlFor="service" className="block text-white">
-            Select Service
-          </label>
-          <select
-            id="service"
-            className="w-full px-4 py-2 mt-2 bg-zinc-700 rounded-md text-white"
-            value={service}
-            onChange={(e) => setService(e.target.value)}
-          >
-            <option value="null">Pick a service</option>
-            <option value="demo">Demo</option>
-            <option value="final">Final Vocal Recording</option>
-          </select>
-        </div>
+{/* Email Field */}
+<div className="relative">
+  <input
+    id="email"
+    type="email"
+    className="peer w-full px-4 py-3 bg-zinc-700 text-white rounded-lg placeholder-transparent
+      focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-offset-2 focus:ring-offset-zinc-800
+      focus:shadow-[0_0_15px_rgba(34,197,94,0.6)] transition-all duration-300"
+    placeholder="Email Address"
+    value={email}
+    onChange={(e) => setEmail(e.target.value)}
+    required
+  />
+  <label
+    htmlFor="email"
+    className="absolute left-4 top-2 text-sm text-gray-400 peer-focus:top-1 peer-focus:text-xs peer-focus:text-green-400 peer-placeholder-shown:top-3.5 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-500 transition-all font-sans"
+  >
+    Email
+  </label>
+</div>
 
-        {/* Number of Songs or Hours */}
-        {service !== "final" && (
+{/* Service Selection */}
+<div className="relative">
+  <select
+    id="service"
+    className="peer w-full px-4 py-3 bg-zinc-700 text-white rounded-lg placeholder-transparent
+      focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-offset-2 focus:ring-offset-zinc-800
+      focus:shadow-[0_0_15px_rgba(34,197,94,0.6)] transition-all duration-300"
+    value={service}
+    onChange={(e) => setService(e.target.value)}
+  >
+    <option value="null">Pick a service</option>
+    <option value="demo">Demo</option>
+    <option value="final">Final Vocal Recording</option>
+  </select>
+</div>
+
+{/* Number of Songs or Hours */}
+{service === "demo" && (
+  <div className="relative">
+    <input
+      id="songCount"
+      type="number"
+      min={1}
+      max={10}
+      className="peer w-full px-4 py-3 bg-zinc-700 text-white rounded-lg placeholder-transparent
+        focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-offset-2 focus:ring-offset-zinc-800
+        focus:shadow-[0_0_15px_rgba(34,197,94,0.6)] transition-all duration-300"
+      value={songCount}
+      onChange={(e) => setSongCount(parseInt(e.target.value))}
+      placeholder="Enter number of songs"
+      required
+    />
+    <label
+      htmlFor="songCount"
+      className="absolute left-8 top-3.5 text-sm text-gray-400 peer-focus:top-1 peer-focus:text-xs peer-focus:text-green-400 peer-placeholder-shown:top-3.5 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-500 transition-all font-sans"
+    >
+      Number of Songs
+    </label>
+  </div>
+)}
+
+
+          {/* Booking Calendar */}
           <div>
-            <label htmlFor="songCount" className="block text-white">
-              {service === "final" ? "Number of Hours" : "Number of Songs"}
-            </label>
-            <input
-              id="songCount"
-              type="number"
-              min={1}
-              max={10}
-              className="w-full px-4 py-2 mt-2 bg-zinc-700 rounded-md text-white"
-              value={songCount}
-              onChange={(e) => setSongCount(parseInt(e.target.value))}
-              required
-            />
+            <h2 className="text-xl font-semibold text-white mb-3 font-serif">
+              Pick a Date
+            </h2>
+            
+            <BookingCalendar onSelectDate={handleDateSelection} selectedDate={selectedDate} />
           </div>
-        )}
-        <div>
-          <h2 className="text-xl font-bold mb-4">Pick a Date</h2>
-          <BookingCalendar onSelectDate={handleDateSelection} />
 
-          {selectedDate && (
-            <div className="my-6">
-              <h3 className="text-xl mb-2">Pick a Time</h3>
-              {availableTimeSlots.length > 0 ? (
-                <div className="grid grid-cols-3 gap-4">
-                  {availableTimeSlots.map((time) => (
-                    <button
-                      key={time}
-                      onClick={() => handleTimeSelection(time)}
-                      className={`p-2 rounded ${
-                        selectedTime === time
-                          ? "bg-green-400 text-black"
-                          : "bg-gray-600 hover:bg-green-800"
-                      }`}
-                    >
-                      {time}
-                    </button>
-                  ))}
-                </div>
-              ) : (
-                <p className="text-gray-400">
-                  No available times for this day.
-                </p>
-              )}
-            </div>
-          )}
+{/* Time and Date Spinner */}
+{loadingTimes ? (
+  <div className="flex justify-center items-center mt-4">
+    <svg
+      className="animate-spin h-6 w-6 text-green-500 py-1"
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 0 24 24"
+    >
+      <circle
+        className="opacity-25"
+        cx="12"
+        cy="12"
+        r="10"
+        stroke="currentColor"
+        strokeWidth="4"
+      ></circle>
+      <path
+        className="opacity-75"
+        fill="currentColor"
+        d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+      ></path>
+    </svg>
+    <span> Loading available times...</span>
+  </div>
+) : (
+  selectedDate && (
+    <div className="my-6">
+      <h3 className="text-xl text-white mb-4 font-serif">Pick a Time</h3>
+      {availableTimeSlots.length > 0 ? (
+        <div className="grid grid-cols-3 gap-4">
+          {availableTimeSlots.map((time) => (
+            <button
+              key={time}
+              onClick={() => handleTimeSelection(time)}
+              type="button"
+              className="cursor-pointer peer w-full px-4 py-3 bg-zinc-700 text-white rounded-lg placeholder-transparent
+                focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-offset-2 focus:ring-offset-zinc-800
+                focus:shadow-[0_0_15px_rgba(34,197,94,0.6)] transition-all duration-300"
+            >
+              {time}
+            </button>
+          ))}
         </div>
+      ) : (
+        <p className="text-gray-400 font-sans">No available times for this day.</p>
+      )}
+    </div>
+  )
+)}
 
-        {/* Price Estimation */}
-        {renderPrice()}
 
-        {/* Submit Button */}
-        {/* Submit Button */}
-<button
+
+
+{selectedDate && selectedTime && (
+  <div className="mt-4 text-center text-green-400">
+    You selected: {selectedDate.toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })} at {selectedTime}
+  </div>
+)}
+
+
+          {/* Price Estimation */}
+          {renderPrice()}
+
+          {/* Submit Button */}
+          <button
   type="submit"
   disabled={isSubmitting}
-  className={`w-full bg-green-500 hover:bg-green-600 transition-colors text-black font-bold py-2 rounded-md ${isSubmitting ? "opacity-50 cursor-not-allowed" : ""}`}
+  className={`cursor-pointer w-full bg-green-500 hover:bg-green-600 transition-all duration-300 transform hover:scale-105 text-black font-bold py-3 rounded-xl
+    ${isSubmitting ? "opacity-50 cursor-not-allowed" : "animate-customPulse"}
+  `}
 >
   {isSubmitting ? (
     <div className="flex items-center justify-center">
@@ -364,7 +429,8 @@ export default function BookingForm() {
   )}
 </button>
 
-      </form>
+        </motion.form>
+      </div>
     </>
   );
 }
