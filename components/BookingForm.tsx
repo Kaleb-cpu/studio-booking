@@ -20,7 +20,7 @@ const TIME_SLOTS = [
   "05:00 PM",
   "06:00 PM",
   "07:00 PM",
-  "08:00 PM",
+  "09:00 PM",
 ];
 
 export default function BookingForm() {
@@ -30,7 +30,6 @@ export default function BookingForm() {
   const [dateTime, setDateTime] = useState("");
   const [songCount, setSongCount] = useState(1);
   const [estimatedPrice, setEstimatedPrice] = useState(0);
-  const [formError, setFormError] = useState<string | null>(null);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [selectedTime, setSelectedTime] = useState<string>("");
   const [busyTimes, setBusyTimes] = useState<{ start: string; end: string }[]>([]);
@@ -134,12 +133,23 @@ const [availableTimeSlots, setAvailableTimeSlots] = useState<string[]>([]);
   const handleDateSelection = (date: Date) => {
     setSelectedDate(date); 
   };
+
+  const handleTimeSelection = (time: string) => {
+    setSelectedTime(time);
+  
+    if (selectedDate) {
+      const formattedDate = selectedDate.toISOString().split('T')[0]; // e.g., "2025-04-29"
+      const finalDateTime = `${formattedDate}T${time}:00`; // e.g., "2025-04-29T10:00:00"
+      setDateTime(finalDateTime);
+    }
+  };
+  
+  
   
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!dateTime) {
-      setFormError("Please select a date and time.");
       return;
     }
     const res = await fetch("/api/book", {
@@ -158,7 +168,6 @@ const [availableTimeSlots, setAvailableTimeSlots] = useState<string[]>([]);
       setSongCount(1);
       router.push("/success");
     } else {
-      setFormError(data.error || "Something went wrong.");
     }
   };
 
@@ -280,7 +289,7 @@ const [availableTimeSlots, setAvailableTimeSlots] = useState<string[]>([]);
         {availableTimeSlots.map((time) => (
           <button
             key={time}
-            onClick={() => setSelectedTime(time)}
+            onClick={() => handleTimeSelection(time)}
             className={`p-2 rounded ${
               selectedTime === time
                 ? "bg-green-400 text-black"
@@ -298,24 +307,7 @@ const [availableTimeSlots, setAvailableTimeSlots] = useState<string[]>([]);
 )}
 
     </div>
-        {/* Date-Time Input
-        <div>
-          <label htmlFor="dateTime" className="block text-white">
-            Select Date and Time of Your Session
-          </label>
-          <input
-            id="dateTime"
-            type="datetime-local"
-            className="w-full px-4 py-2 mt-2 bg-zinc-700 rounded-md text-white"
-            value={dateTime}
-            onChange={(e) => setDateTime(e.target.value)}
-            required
-          />
-          <div className="text-sm text-zinc-400 mt-1">
-            Format: YYYY-MM-DD HH:MM
-          </div>
-        </div> */}
-
+       
         {/* Price Estimation */}
         {renderPrice()}
 
@@ -326,11 +318,6 @@ const [availableTimeSlots, setAvailableTimeSlots] = useState<string[]>([]);
         >
           Book Now
         </button>
-        {formError && (
-          <div className="bg-red-100 text-red-700 p-3 rounded-md mt-2">
-            {formError}
-          </div>
-        )}
       </form>
     </>
   );
