@@ -29,6 +29,7 @@ export default function BookingCalendar({
       });
   }, []);
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const isDateAvailable = (date: Date) => {
     const startHour = date.getHours();
     const isWithinHours = startHour >= 8 && startHour <= 21;
@@ -64,14 +65,15 @@ export default function BookingCalendar({
 
   const handleDateChange = (value: Date | Date[]) => {
     if (Array.isArray(value)) {
-      // Handle array of dates if multi-date selection is allowed
-      console.warn("Multi-date selection is not supported. Defaulting to the first date.");
+      // Handle the array case if needed
+      console.warn("Multi-date selection is not supported. Using the first date.");
       onSelectDate(value[0]);
     } else {
       // Handle single date
       onSelectDate(value);
     }
   };
+  
 
   return (
     <div>
