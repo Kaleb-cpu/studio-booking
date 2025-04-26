@@ -4,7 +4,24 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { calculatePrice } from "@/lib/calculatePrice";
+import BookingCalendar from "@/components/BookingCalendar";
 import NavBar from "./NavBar";
+
+const TIME_SLOTS = [
+  "08:00 AM",
+  "09:00 AM",
+  "10:00 AM",
+  "11:00 AM",
+  "12:00 PM",
+  "01:00 PM",
+  "02:00 PM",
+  "03:00 PM",
+  "04:00 PM",
+  "05:00 PM",
+  "06:00 PM",
+  "07:00 PM",
+  "08:00 PM",
+];
 
 export default function BookingForm() {
   const [name, setName] = useState("");
@@ -13,16 +30,118 @@ export default function BookingForm() {
   const [dateTime, setDateTime] = useState("");
   const [songCount, setSongCount] = useState(1);
   const [estimatedPrice, setEstimatedPrice] = useState(0);
-  const router = useRouter();
   const [formError, setFormError] = useState<string | null>(null);
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const [selectedTime, setSelectedTime] = useState<string>("");
+  const [busyTimes, setBusyTimes] = useState<{ start: string; end: string }[]>([]);
+const [availableTimeSlots, setAvailableTimeSlots] = useState<string[]>([]);
+  const router = useRouter();
+
 
   useEffect(() => {
     setEstimatedPrice(calculatePrice(service, songCount));
   }, [service, songCount]);
 
+  useEffect(() => {
+    if (selectedDate) {
+      fetchBusyTimes(selectedDate);
+    }
+  }, [selectedDate]);
+  
+  
+  useEffect(() => {
+    if (selectedDate && selectedTime) {
+      const [time, modifier] = selectedTime.split(" ");
+      let [hours, minutes] = time.split(":").map(Number);
+      if (modifier === "PM" && hours !== 12) {
+        hours += 12;
+      }
+      if (modifier === "AM" && hours === 12) {
+        hours = 0;
+      }
+
+      const combined = new Date(selectedDate);
+      combined.setHours(hours);
+      combined.setMinutes(minutes);
+      combined.setSeconds(0);
+      combined.setMilliseconds(0);
+
+      setDateTime(combined.toISOString());
+    }
+  }, [selectedDate, selectedTime]);
+
+  async function fetchBusyTimes(date: Date) {
+    if (!(date instanceof Date) || isNaN(date.getTime())) {
+      console.error("Invalid date selected!");
+      return;
+    }
+    
+    try {
+      const res = await fetch("/api/calendar/busy", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ date: date.toISOString().split('T')[0] }),
+      });
+      
+      if (!res.ok) throw new Error('Failed to fetch busy times.');
+      
+      const data = await res.json();
+      console.log("Busy slots from API:", data);
+      setBusyTimes(data);
+  
+      filterAvailableTimes(date, data);
+    } catch (error) {
+      console.error(error);
+      setBusyTimes([]); // fallback: assume everything is available
+      setAvailableTimeSlots(TIME_SLOTS); // fallback: show all times
+    }
+  }
+  
+
+  function filterAvailableTimes(date: Date, busySlots: { start: string; end: string }[]) {
+    const available: string[] = [];
+  
+    for (const slot of TIME_SLOTS) {
+      const [time, modifier] = slot.split(" ");
+      let [hours, minutes] = time.split(":").map(Number);
+  
+      if (modifier === "PM" && hours !== 12) hours += 12;
+      if (modifier === "AM" && hours === 12) hours = 0;
+  
+      const slotStart = new Date(date);
+      slotStart.setHours(hours, minutes, 0, 0);
+  
+      const slotEnd = new Date(slotStart);
+      slotEnd.setHours(slotStart.getHours() + 1); // 1 hour sessions
+      console.log("Checking slot:", slotStart.toISOString(), "against busy", busySlots);
+
+      const overlap = busySlots.some((busy) => {
+        const busyStart = new Date(busy.start);
+        const busyEnd = new Date(busy.end);
+        return slotStart < busyEnd && slotEnd > busyStart;
+      });
+  
+      const now = new Date();
+  
+      if (!overlap && slotStart > now) {
+        available.push(slot);
+      }
+    }
+  
+    setAvailableTimeSlots(available);
+  }
+  
+  const handleDateSelection = (date: Date) => {
+    setSelectedDate(date); 
+  };
+  
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    if (!dateTime) {
+      setFormError("Please select a date and time.");
+      return;
+    }
     const res = await fetch("/api/book", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -148,8 +267,38 @@ export default function BookingForm() {
             />
           </div>
         )}
+<div>
+      <h2 className="text-xl font-bold mb-4">Pick a Date</h2>
+      <BookingCalendar onSelectDate={handleDateSelection} />
 
-        {/* Date-Time Input */}
+      
+      {selectedDate && (
+  <div className="my-6">
+    <h3 className="text-xl mb-2">Pick a Time</h3>
+    {availableTimeSlots.length > 0 ? (
+      <div className="grid grid-cols-3 gap-4">
+        {availableTimeSlots.map((time) => (
+          <button
+            key={time}
+            onClick={() => setSelectedTime(time)}
+            className={`p-2 rounded ${
+              selectedTime === time
+                ? "bg-green-400 text-black"
+                : "bg-gray-600 hover:bg-green-800"
+            }`}
+          >
+            {time}
+          </button>
+        ))}
+      </div>
+    ) : (
+      <p className="text-gray-400">No available times for this day.</p>
+    )}
+  </div>
+)}
+
+    </div>
+        {/* Date-Time Input
         <div>
           <label htmlFor="dateTime" className="block text-white">
             Select Date and Time of Your Session
@@ -165,7 +314,7 @@ export default function BookingForm() {
           <div className="text-sm text-zinc-400 mt-1">
             Format: YYYY-MM-DD HH:MM
           </div>
-        </div>
+        </div> */}
 
         {/* Price Estimation */}
         {renderPrice()}
