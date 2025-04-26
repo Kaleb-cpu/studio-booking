@@ -46,7 +46,7 @@ export default function SuccessPage() {
       (｡◕‿◕｡)  🎶✨
       </div>
 
-      <p className="mt-2 mb-2 animate-pulse text-amber-200 text-xl">
+      <p className="mt-2 mb-2 animate-pulse text-purple-300 text-xl">
         I am excited to see you! 🎤🎧
       </p>
       <div className="space-x-4">

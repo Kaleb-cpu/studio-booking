@@ -21,6 +21,16 @@ export async function sendEmailNotification({
     },
   });
 
+  const formattedDateTime = new Intl.DateTimeFormat("en-US", {
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: true,
+  }).format(new Date(dateTime));
+
   // Owner Notification - Booking details
   const mailOptionsOwner = {
     from: `"Bethany Recording Studio" <${process.env.EMAIL_USER}>`,
@@ -31,15 +41,13 @@ export async function sendEmailNotification({
 You have a new booking at Bethany Recording Studio! Here are the details:
 
 ------------------------------------------
-**Name:** ${name}
-**Email:** ${email}
-**Phone:** ${phone}
+Name: ${name}
+Email: ${email}
+Phone: ${phone}
 
-**Service Requested:** ${service}
+Service Requested: ${service}
 
-**Date & Time of Session:** ${new Date(dateTime).toLocaleString()}
-
-------------------------------------------
+Date & Time of Session: ${formattedDateTime}
 
 Please review the booking and ensure the requested time is available.
 
@@ -58,9 +66,9 @@ Bethany Recording Studio Team
 Thank you for booking a session at Bethany Recording Studio! I am excited to have you. Below are the details of your booking:
 
 ------------------------------------------
-**Service Requested:** ${service}
+Service Requested: ${service}
 
-**Date & Time of Your Session:** ${new Date(dateTime).toLocaleString()}
+Date & Time of Your Session: ${formattedDateTime}
 
 ------------------------------------------
 
