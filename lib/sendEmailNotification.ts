@@ -25,7 +25,7 @@ export async function sendEmailNotification({
     from: `"Bethany Recording Studio" <${process.env.EMAIL_USER}>`,
     to: process.env.NOTIFY_EMAIL, // your own email
     subject: "New Studio Booking",
-    text: `New booking by ${name} (${email}) (${email}
+    text: `New booking by ${name} (${email}) (${phone}
 Service: ${service}
 Date & Time: ${new Date(dateTime).toLocaleString()}`,
   };
