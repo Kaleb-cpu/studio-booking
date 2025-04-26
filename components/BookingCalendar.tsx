@@ -9,7 +9,7 @@ type BusyRange = { start: string; end: string };
 
 export default function BookingCalendar({
   onSelectDate,
-  selectedDate, // ✅ accept this from parent
+  selectedDate,
 }: {
   onSelectDate: (date: Date) => void;
   selectedDate: Date | null;
@@ -28,8 +28,7 @@ export default function BookingCalendar({
         console.error("Error fetching busy ranges:", error);
       });
   }, []);
-  
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+
   const isDateAvailable = (date: Date) => {
     const startHour = date.getHours();
     const isWithinHours = startHour >= 8 && startHour <= 21;
@@ -55,7 +54,7 @@ export default function BookingCalendar({
       });
 
       if (selectedDate && dateOnly.toDateString() === selectedDate.toDateString()) {
-        return "tile-selected"; //  highlight selected date
+        return "tile-selected"; // highlight selected date
       }
 
       if (isPast || unavailable) return "tile-unavailable";
@@ -63,8 +62,15 @@ export default function BookingCalendar({
     }
   };
 
-  const handleDateChange = (value: Date) => {
-    onSelectDate(value);
+  const handleDateChange = (value: Date | Date[]) => {
+    if (Array.isArray(value)) {
+      // Handle array of dates if multi-date selection is allowed
+      console.warn("Multi-date selection is not supported. Defaulting to the first date.");
+      onSelectDate(value[0]);
+    } else {
+      // Handle single date
+      onSelectDate(value);
+    }
   };
 
   return (
