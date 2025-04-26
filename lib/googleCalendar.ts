@@ -7,9 +7,17 @@ import { readFileSync } from "fs";
 const SCOPES = ["https://www.googleapis.com/auth/calendar"];
 const calendarId = process.env.GOOGLE_CALENDAR_ID!;
 
-// Read service account JSON
-const keyPath = path.join(process.cwd(), "service-account.json");
-const keyFile = JSON.parse(readFileSync(keyPath, "utf-8"));
+let keyFile;
+
+if (process.env.SERVICE_ACCOUNT_JSON) {
+  // Running on Netlify — read from env var
+  keyFile = JSON.parse(process.env.SERVICE_ACCOUNT_JSON);
+} else {
+  // Running locally — read from file
+  const keyPath = path.join(process.cwd(), "service-account.json");
+  keyFile = JSON.parse(readFileSync(keyPath, "utf-8"));
+}
+
 
 // Create JWT auth client
 const auth = new JWT({
