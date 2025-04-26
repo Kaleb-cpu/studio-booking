@@ -36,11 +36,9 @@ export default function HomePage() {
           initial={{ y: 50, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 1.5, delay: 0.5 }}
-          className={`text-xl sm:text-4xl md:text-5xl text-amber-400 font-extrabold mb-8 drop-shadow-[0_8px_12px_rgba(255,191,0,0.5)] tracking-wide ${quicksand.className}`}
+          className={`text-2xl sm:text-4xl md:text-5xl text-amber-400 font-bold mb-8 drop-shadow-[0_8px_12px_rgba(255,191,0,0.5)] ${quicksand.className}`}
 >
-
-          Welcome to Bethany Recording Studio
-
+Welcome to <br /> Bethany Recording Studio
         </motion.h1>
         <motion.h1
           initial={{ x: 55, opacity: 0 }}
@@ -50,7 +48,7 @@ export default function HomePage() {
         >
 
         <Link href="/book">
-          <button className="cursor-pointer relative bg-green-500 hover:bg-green-600 text-black font-bold px-10 py-4 md:text-xl sm:text-lg rounded-full shadow-2xl transition transform hover:scale-105 overflow-hidden">
+          <button className="cursor-pointer relative bg-green-500 hover:bg-green-600 text-black font-bold px-10 py-2 sm:py-4 md:text-xl sm:text-lg rounded-full shadow-2xl transition transform hover:scale-105 overflow-hidden">
             {/* Text with Pulse */}
             <motion.span
               initial={{ opacity: 1 }}
