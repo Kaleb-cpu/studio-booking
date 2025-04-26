@@ -3,12 +3,13 @@ import { addEventToCalendar } from "@/lib/googleCalendar";
 import { sendEmailNotification } from "@/lib/sendEmailNotification";
 
 export async function POST(req: NextRequest) {
-  const { name, email, service, dateTime } = await req.json();
-
   try {
+    const { name, email, service, dateTime } = await req.json();
+
     await addEventToCalendar({ name, email, service, dateTime });
     await sendEmailNotification({ name, email, service, dateTime });
-    const res = NextResponse.json({ message: "Booking added to calendar." }, { status: 200 });
+
+    const res = NextResponse.json({ message: "Booking added to calendar." });
     res.headers.set("Access-Control-Allow-Origin", "*");
     res.headers.set("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
     res.headers.set("Access-Control-Allow-Headers", "Content-Type");
@@ -16,7 +17,13 @@ export async function POST(req: NextRequest) {
     return res;
   } catch (error) {
     console.error("Calendar Error:", error);
-    return NextResponse.json({ error: "Failed to add to calendar" }, { status: 500 });
+
+    const res = NextResponse.json({ error: "Failed to add to calendar" }, { status: 500 });
+    res.headers.set("Access-Control-Allow-Origin", "*");
+    res.headers.set("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+    res.headers.set("Access-Control-Allow-Headers", "Content-Type");
+
+    return res;
   }
 }
 
