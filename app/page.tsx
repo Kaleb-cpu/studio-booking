@@ -17,14 +17,14 @@ export default function HomePage() {
       <motion.div
         initial={{ scale: 1, opacity: 0 }}
         animate={{ scale: 1.1, opacity: 1 }}
-        transition={{ duration: 20, ease: "easeOut" }}
+        transition={{ duration: 5, ease: "easeOut" }}
         className="absolute inset-0 z-0"
       >
         <Image
           src="/studio.jpg"
           alt="Studio background"
           fill
-          className="object-cover brightness-75"
+          className="object-cover brightness-40"
           priority
         />
       </motion.div>
@@ -35,9 +35,10 @@ export default function HomePage() {
         <motion.h1
           initial={{ y: 50, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
-          transition={{ duration: 1, delay: 0.5 }}
-          className={`md:text-5xl sm:text-3xl font-extrabold mb-8 drop-shadow-2xl ${quicksand.className}`}
-        >
+          transition={{ duration: 1.5, delay: 0.5 }}
+          className={`text-xl sm:text-4xl md:text-5xl text-amber-400 font-extrabold mb-8 drop-shadow-[0_8px_12px_rgba(255,191,0,0.5)] tracking-wide ${quicksand.className}`}
+>
+
           Welcome to Bethany Recording Studio
 
         </motion.h1>
@@ -59,7 +60,7 @@ export default function HomePage() {
                 repeat: Infinity,
                 ease: "easeInOut",
               }}
-              className="relative z-10"
+              className="relative z-10 text-lg sm:text-xl md:text-2xl"
               >
               Book a Session
             </motion.span>
