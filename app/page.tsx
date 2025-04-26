@@ -2,7 +2,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { motion } from "framer-motion";
-import { Lora, Quicksand } from "next/font/google";
+import { Quicksand } from "next/font/google";
 
 const quicksand = Quicksand({
   weight: ["400", "600", "700"],
