@@ -29,12 +29,14 @@ export default function BookingForm() {
   const [loadingTimes, setLoadingTimes] = useState(false);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
   const [service, setService] = useState("null");
   const [dateTime, setDateTime] = useState("");
   const [songCount, setSongCount] = useState(1);
   const [estimatedPrice, setEstimatedPrice] = useState(0);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [selectedTime, setSelectedTime] = useState<string>("");
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [busyTimes, setBusyTimes] = useState<{ start: string; end: string }[]>(
     []
   );
@@ -49,11 +51,13 @@ export default function BookingForm() {
     if (selectedDate) {
       fetchBusyTimes(selectedDate);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedDate]);
 
   useEffect(() => {
     if (selectedDate && selectedTime) {
       const [time, modifier] = selectedTime.split(" ");
+      // eslint-disable-next-line prefer-const
       let [hours, minutes] = time.split(":").map(Number);
   
       if (modifier === "PM" && hours !== 12) {
@@ -112,7 +116,11 @@ export default function BookingForm() {
 
     for (const slot of TIME_SLOTS) {
       const [time, modifier] = slot.split(" ");
+      // eslint-disable-next-line prefer-const
       let [hours, minutes] = time.split(":").map(Number);
+
+      
+  
 
       if (modifier === "PM" && hours !== 12) hours += 12;
       if (modifier === "AM" && hours === 12) hours = 0;
@@ -166,14 +174,16 @@ export default function BookingForm() {
       const res = await fetch("/api/book", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email, service, dateTime, songCount }),
+        body: JSON.stringify({ name, email, phone, service, dateTime, songCount }),
       });
 
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const data = await res.json();
 
       if (res.ok) {
         setName("");
         setEmail("");
+        setPhone("")
         setService("null");
         setDateTime("");
         setSongCount(1);
@@ -237,7 +247,7 @@ export default function BookingForm() {
 
           {/* Name Field */}
           {/* Name Field */}
-<div className="relative">
+          <div className="relative">
   <input
     id="name"
     className="peer w-full px-4 py-3 bg-zinc-700 text-white rounded-lg placeholder-transparent
@@ -250,11 +260,16 @@ export default function BookingForm() {
   />
   <label
     htmlFor="name"
-    className="absolute left-4 top-2 text-sm text-gray-400 peer-focus:top-1 peer-focus:text-xs peer-focus:text-green-400 peer-placeholder-shown:top-3.5 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-500 transition-all font-sans"
+    className={`absolute left-4 ${
+      name ? 'top-0.5 text-xs text-green-400' : 'top-4 text-base text-gray-500'
+    } transition-all font-sans peer-focus:top-0.5 peer-focus:text-xs peer-focus:text-green-400`}
   >
     Your Name
   </label>
 </div>
+
+
+
 
 {/* Email Field */}
 <div className="relative">
@@ -271,11 +286,36 @@ export default function BookingForm() {
   />
   <label
     htmlFor="email"
-    className="absolute left-4 top-2 text-sm text-gray-400 peer-focus:top-1 peer-focus:text-xs peer-focus:text-green-400 peer-placeholder-shown:top-3.5 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-500 transition-all font-sans"
+    className={`absolute left-4 ${
+      email ? 'top-0.5 text-xs text-green-400' : 'top-4 text-base text-gray-500'
+    } transition-all font-sans peer-focus:top-0.5 peer-focus:text-xs peer-focus:text-green-400`}
   >
     Email
   </label>
 </div>
+
+<div className="relative">
+  <input
+    id="phone"
+    type="tel"
+    className="peer w-full px-4 py-3 bg-zinc-700 text-white rounded-lg placeholder-transparent
+      focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-offset-2 focus:ring-offset-zinc-800
+      focus:shadow-[0_0_15px_rgba(34,197,94,0.6)] transition-all duration-300"
+    placeholder="Phone Number"
+    value={phone}
+    onChange={(e) => setPhone(e.target.value)}
+    required
+  />
+  <label
+    htmlFor="phone"
+    className={`absolute left-4 ${
+      phone ? 'top-0.5 text-xs text-green-400' : 'top-4 text-base text-gray-500'
+    } transition-all font-sans peer-focus:top-0.5 peer-focus:text-xs peer-focus:text-green-400`}
+  >
+    Phone Number
+  </label>
+</div>
+
 
 {/* Service Selection */}
 <div className="relative">
@@ -295,28 +335,45 @@ export default function BookingForm() {
 
 {/* Number of Songs or Hours */}
 {service === "demo" && (
-  <div className="relative">
-    <input
-      id="songCount"
-      type="number"
-      min={1}
-      max={10}
-      className="peer w-full px-4 py-3 bg-zinc-700 text-white rounded-lg placeholder-transparent
-        focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-offset-2 focus:ring-offset-zinc-800
-        focus:shadow-[0_0_15px_rgba(34,197,94,0.6)] transition-all duration-300"
-      value={songCount}
-      onChange={(e) => setSongCount(parseInt(e.target.value))}
-      placeholder="Enter number of songs"
-      required
-    />
-    <label
-      htmlFor="songCount"
-      className="absolute left-8 top-3.5 text-sm text-gray-400 peer-focus:top-1 peer-focus:text-xs peer-focus:text-green-400 peer-placeholder-shown:top-3.5 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-500 transition-all font-sans"
-    >
-      Number of Songs
-    </label>
+  <div className="relative flex flex-col gap-2">
+    {/* Text above the input */}
+    <span className="text-white text-md mb-2">Enter the amount of songs</span>
+
+    {/* Song count input with increment and decrement buttons */}
+    <div className="flex items-center gap-2">
+      <button
+        type="button"
+        onClick={() => setSongCount((prev) => Math.max(1, prev - 1))}
+        className="px-3 py-2 bg-zinc-600 text-white rounded-lg hover:bg-zinc-500 transition"
+      >
+        −
+      </button>
+      <input
+        id="songCount"
+        type="number"
+        min={1}
+        max={10}
+        className="peer w-24 text-center px-4 py-3 bg-zinc-700 text-white rounded-lg placeholder-transparent
+          focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-offset-2 focus:ring-offset-zinc-800
+          focus:shadow-[0_0_15px_rgba(34,197,94,0.6)] transition-all duration-300"
+        value={songCount}
+        onChange={(e) => setSongCount(parseInt(e.target.value))}
+        placeholder="Enter number of songs"
+        required
+      />
+      <button
+        type="button"
+        onClick={() => setSongCount((prev) => Math.min(10, prev + 1))}
+        className="px-3 py-2 bg-zinc-600 text-white rounded-lg hover:bg-zinc-500 transition"
+      >
+        +
+      </button>
+    </div>
   </div>
 )}
+
+
+
 
 
           {/* Booking Calendar */}

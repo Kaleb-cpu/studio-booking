@@ -3,11 +3,13 @@ import nodemailer from "nodemailer";
 export async function sendEmailNotification({
   name,
   email,
+  phone,
   service,
   dateTime,
 }: {
   name: string;
   email: string;
+  phone: string;
   service: string;
   dateTime: string;
 }) {
@@ -23,7 +25,7 @@ export async function sendEmailNotification({
     from: `"Bethany Recording Studio" <${process.env.EMAIL_USER}>`,
     to: process.env.NOTIFY_EMAIL, // your own email
     subject: "New Studio Booking",
-    text: `New booking by ${name} (${email})
+    text: `New booking by ${name} (${email}) (${email}
 Service: ${service}
 Date & Time: ${new Date(dateTime).toLocaleString()}`,
   };

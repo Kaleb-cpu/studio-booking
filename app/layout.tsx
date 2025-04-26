@@ -1,15 +1,12 @@
 import type { Metadata } from "next";
 import "./globals.css";
 
-import { Nunito, Quicksand, Lora } from "next/font/google";
+import { Nunito } from "next/font/google";
 
 const nunito = Nunito({
   weight: ["400", "600", "700"],
   subsets: ["latin"],
 });
-
-const quicksand = Quicksand({ subsets: ["latin"], weight: ["400", "500", "700"] });
-const lora = Lora({ subsets: ["latin"], weight: ["400", "600", "700"] });
 
 
 export const metadata: Metadata = {

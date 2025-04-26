@@ -4,10 +4,10 @@ import { sendEmailNotification } from "@/lib/sendEmailNotification";
 
 export async function POST(req: NextRequest) {
   try {
-    const { name, email, service, dateTime } = await req.json();
+    const { name, email, phone, service, dateTime } = await req.json();
 
-    await addEventToCalendar({ name, email, service, dateTime });
-    await sendEmailNotification({ name, email, service, dateTime });
+    await addEventToCalendar({ name, email, phone, service, dateTime });
+    await sendEmailNotification({ name, email, phone, service, dateTime });
 
     const res = NextResponse.json({ message: "Booking added to calendar." });
     res.headers.set("Access-Control-Allow-Origin", "*");

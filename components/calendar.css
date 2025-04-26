@@ -75,11 +75,38 @@
   }
   
   .tile-selected {
-    background: #14ad75 !important; /* Tailwind green-500 */
+    background: #0fd68d !important; /* Tailwind green-500 */
     color: rgb(0, 0, 0) !important;
     border-radius: 50% !important;
     scale: 1.1;
     transition: all 0.2s ease;
   }
+
+  .react-calendar__navigation button {
+    background: transparent !important;
+    background-color: transparent !important;
+    color: #0fd68d;
+    font-size: 1rem;
+    font-weight: bold;
+    border-radius: 9999px;
+    padding: 0.5rem;
+    width: 3rem;
+    height: 3rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.3s ease;
+    border: none; /* prevent border issues too */
+  }
+  
+  .react-calendar__navigation button:hover,
+  .react-calendar__navigation button:focus,
+  .react-calendar__navigation button:active {
+    background: #2c2d2e !important; /* Dark gray background */
+    background-color: #183249 !important; /* Also set background-color */
+    color: #ffffff;
+  }
+  
+  
   
   

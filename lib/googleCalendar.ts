@@ -30,11 +30,13 @@ const auth = new JWT({
 export async function addEventToCalendar({
   name,
   email,
+  phone,
   service,
   dateTime,
 }: {
   name: string;
   email: string;
+  phone: string;
   service: string;
   dateTime: string;
 }) {
@@ -74,7 +76,7 @@ export async function addEventToCalendar({
 // Add Event
   const event = {
     summary: `${service === "final" ? "Final Vocal Recording" : "Demo"} - ${name}`,
-    description: `Booked by ${name} (${email})`,
+    description: `Booked by ${name} (${email}) (${phone})`,
     start: {
       dateTime: formatISO(eventStartTime),
       timeZone: "America/Edmonton",

@@ -28,7 +28,8 @@ export default function BookingCalendar({
         console.error("Error fetching busy ranges:", error);
       });
   }, []);
-
+  
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const isDateAvailable = (date: Date) => {
     const startHour = date.getHours();
     const isWithinHours = startHour >= 8 && startHour <= 21;
@@ -54,7 +55,7 @@ export default function BookingCalendar({
       });
 
       if (selectedDate && dateOnly.toDateString() === selectedDate.toDateString()) {
-        return "tile-selected"; // ✅ NEW: highlight selected date
+        return "tile-selected"; //  highlight selected date
       }
 
       if (isPast || unavailable) return "tile-unavailable";
