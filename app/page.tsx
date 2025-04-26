@@ -9,10 +9,6 @@ const quicksand = Quicksand({
   subsets: ["latin"],
 });
 
-const lora = Lora({
-  weight: ["400", "600", "700"],
-  subsets: ["latin"],
-});
 
 export default function HomePage() {
   return (
