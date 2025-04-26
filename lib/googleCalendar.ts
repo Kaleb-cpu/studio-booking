@@ -18,9 +18,6 @@ if (process.env.SERVICE_ACCOUNT_JSON) {
   keyFile = JSON.parse(readFileSync(keyPath, "utf-8"));
 }
 
-console.log("GOOGLE_CALENDAR_ID:", process.env.GOOGLE_CALENDAR_ID?.slice(0, 5), "..."); // just a preview
-console.log("Has SERVICE_ACCOUNT_JSON?", !!process.env.SERVICE_ACCOUNT_JSON);
-
 
 // Create JWT auth client
 const auth = new JWT({
@@ -45,7 +42,36 @@ export async function addEventToCalendar({
 
   const eventStartTime = new Date(dateTime);
   const eventEndTime = new Date(eventStartTime.getTime() + 60 * 60 * 1000); // 1 hour
+  const now = new Date();
 
+  // Check 1: Booking is not in the past
+  if (eventStartTime < now) {
+    throw new Error("You cannot book for the past.");
+  }
+
+  const hour = eventStartTime.getHours();
+  if (hour < 9 || hour >= 20) {
+    throw new Error("You can only book between 9 AM and 8 PM.");
+  }
+
+  // Check if booking time is within studio hours (9 AM - 8 PM)
+  if (hour < 9 || hour >= 20) {
+    throw new Error("Bookings are allowed only between 9:00 AM and 8:00 PM.");
+  }
+  // Check if the time slot is already booked
+  const existingEvents = await calendar.events.list({
+    calendarId,
+    timeMin: eventStartTime.toISOString(),
+    timeMax: eventEndTime.toISOString(),
+    singleEvents: true,
+    orderBy: "startTime",
+  });
+
+  if (existingEvents.data.items && existingEvents.data.items.length > 0) {
+    throw new Error("This time slot is already booked.");
+  }
+
+// Add Event
   const event = {
     summary: `${service === "final" ? "Final Vocal Recording" : "Demo"} - ${name}`,
     description: `Booked by ${name} (${email})`,

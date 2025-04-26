@@ -15,10 +15,14 @@ export async function POST(req: NextRequest) {
     res.headers.set("Access-Control-Allow-Headers", "Content-Type");
 
     return res;
-  } catch (error) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (error: any) {
     console.error("Calendar Error:", error);
 
-    const res = NextResponse.json({ error: "Failed to add to calendar" }, { status: 500 });
+    const res = NextResponse.json(
+      { error: error.message || "Failed to add to calendar" },
+      { status: 400 }
+    );
     res.headers.set("Access-Control-Allow-Origin", "*");
     res.headers.set("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
     res.headers.set("Access-Control-Allow-Headers", "Content-Type");
@@ -26,6 +30,7 @@ export async function POST(req: NextRequest) {
     return res;
   }
 }
+
 
 export async function OPTIONS() {
   const res = new NextResponse(null, { status: 204 });
