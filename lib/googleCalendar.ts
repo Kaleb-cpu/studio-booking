@@ -25,9 +25,10 @@ console.log("Has SERVICE_ACCOUNT_JSON?", !!process.env.SERVICE_ACCOUNT_JSON);
 // Create JWT auth client
 const auth = new JWT({
   email: keyFile.client_email,
-  key: keyFile.private_key,
+  key: keyFile.private_key.replace(/\\n/g, '\n'), 
   scopes: SCOPES,
 });
+
 
 export async function addEventToCalendar({
   name,
