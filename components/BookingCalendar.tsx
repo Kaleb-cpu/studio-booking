@@ -4,8 +4,6 @@ import React, { useEffect, useState } from "react";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 import "./calendar.css"; // your custom styling
-import { Value } from 'react-calendar'; // Ensure this is imported
-
 
 type BusyRange = { start: string; end: string };
 
@@ -65,17 +63,18 @@ export default function BookingCalendar({
     }
   };
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const handleDateChange = (value: Value, event: React.MouseEvent<HTMLButtonElement>) => {
-    if (value === null) {
-      console.warn("No date selected.");
+  const handleDateChange = (value: Date | [Date, Date] | null) => {
+    if (!value) {
+      console.warn("No date selected."); // Handle the null case
       return;
     }
   
     if (Array.isArray(value)) {
-      console.warn("Multi-date selection not supported. Using the first date.");
-      onSelectDate(value[0]); // Use the first date
+      // Handle range selection (start and end date)
+      console.warn("Date range selection is not supported. Using the start date.");
+      onSelectDate(value[0]); // Use the first date in the range
     } else {
+      // Handle single date
       onSelectDate(value);
     }
   };
@@ -83,12 +82,11 @@ export default function BookingCalendar({
   
 
   return (
-    <Calendar
-  onChange={handleDateChange}
-  value={selectedDate || new Date()} // This is safe as it defaults to Date if null
-  tileClassName={tileClassName}
+   <Calendar
+  onChange={(value) => handleDateChange(value as Date | [Date, Date] | null)} // Explicitly cast to match the function's type
+  value={selectedDate || new Date()} // Provide fallback if null
+  tileClassName={tileClassName} // Retain any custom tile logic
 />
 
-  
   );
 }
