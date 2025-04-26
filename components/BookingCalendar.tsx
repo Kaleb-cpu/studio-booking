@@ -63,25 +63,30 @@ export default function BookingCalendar({
     }
   };
 
-  const handleDateChange = (value: Date | Date[]) => {
+  const handleDateChange = (value: Date | [Date, Date] | null) => {
+    if (!value) {
+      console.warn("No date selected."); // Handle the null case
+      return;
+    }
+  
     if (Array.isArray(value)) {
-      // Handle the array case if needed
-      console.warn("Multi-date selection is not supported. Using the first date.");
-      onSelectDate(value[0]);
+      // Handle range selection (start and end date)
+      console.warn("Date range selection is not supported. Using the start date.");
+      onSelectDate(value[0]); // Use the first date in the range
     } else {
       // Handle single date
       onSelectDate(value);
     }
   };
   
+  
 
   return (
-    <div>
-      <Calendar
-        onChange={handleDateChange}
-        value={selectedDate || new Date()} // fallback if null
-        tileClassName={tileClassName}
-      />
-    </div>
+    <Calendar
+    onChange={(value) => handleDateChange(value as Date | [Date, Date] | null)} // Explicitly cast to match the function's type
+    value={selectedDate || new Date()} // Provide fallback if null
+    tileClassName={tileClassName} // Retain any custom tile logic
+  />
+  
   );
 }
