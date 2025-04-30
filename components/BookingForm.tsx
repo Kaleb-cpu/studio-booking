@@ -417,16 +417,20 @@ export default function BookingForm() {
       {availableTimeSlots.length > 0 ? (
         <div className="grid grid-cols-3 gap-4">
           {availableTimeSlots.map((time) => (
-            <button
-              key={time}
-              onClick={() => handleTimeSelection(time)}
-              type="button"
-              className="cursor-pointer peer w-full px-4 py-3 bg-zinc-700 text-white rounded-lg placeholder-transparent
-                focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-offset-2 focus:ring-offset-zinc-800
-                focus:shadow-[0_0_15px_rgba(34,197,94,0.6)] transition-all duration-300"
-            >
-              {time}
-            </button>
+             <button
+             key={time}
+             onClick={() => handleTimeSelection(time)}
+             type="button"
+             className={`cursor-pointer w-full px-4 py-3 rounded-lg text-white bg-zinc-700 transition-all duration-300
+               focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-offset-2 focus:ring-offset-zinc-800
+               active:ring-2 active:ring-green-400 active:ring-offset-2 active:ring-offset-zinc-800
+               active:shadow-[0_0_15px_rgba(34,197,94,0.6)]
+               ${selectedTime === time
+                ? "ring-2 ring-green-400 ring-offset-2 ring-offset-zinc-800 shadow-[0_0_25px_rgba(34,197,94,0.8)] animate-pulse-glow"
+                : ""}`}
+           >
+             {time}
+           </button>
           ))}
         </div>
       ) : (

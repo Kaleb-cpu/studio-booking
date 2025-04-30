@@ -9,7 +9,6 @@ const quicksand = Quicksand({
   subsets: ["latin"],
 });
 
-
 export default function HomePage() {
   return (
     <div className="relative h-screen w-full overflow-hidden">
@@ -37,8 +36,8 @@ export default function HomePage() {
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 1.5, delay: 0.5 }}
           className={`text-2xl sm:text-4xl md:text-5xl text-amber-400 font-bold mb-8 drop-shadow-[0_8px_12px_rgba(255,191,0,0.5)] ${quicksand.className}`}
->
-Welcome to <br /> Bethany Recording Studio
+        >
+          Welcome to <br /> Bethany Recording Studio
         </motion.h1>
         <motion.h1
           initial={{ x: 55, opacity: 0 }}
@@ -46,28 +45,27 @@ Welcome to <br /> Bethany Recording Studio
           transition={{ duration: 1, delay: 1.5 }}
           className={`md:text-5xl sm:text-3xl font-extrabold mb-8 drop-shadow-2xl`}
         >
-
-        <Link href="/book">
-          <button className="cursor-pointer relative bg-green-500 hover:bg-green-600 text-black font-bold px-10 py-2 sm:py-4 md:text-xl sm:text-lg rounded-full shadow-2xl transition transform hover:scale-105 overflow-hidden">
-            {/* Text with Pulse */}
-            <motion.span
-              initial={{ opacity: 1 }}
-              animate={{ opacity: [1, 0.5, 1] }}
-              transition={{
-                duration: 2,
-                repeat: Infinity,
-                ease: "easeInOut",
-              }}
-              className="relative z-10 text-lg sm:text-xl md:text-2xl"
+          <Link href="/book">
+            <button className="cursor-pointer relative bg-green-500 hover:bg-green-600 text-black font-bold px-10 py-2 sm:py-4 md:text-xl sm:text-lg rounded-full shadow-2xl transition transform hover:scale-105 overflow-hidden">
+              {/* Text with Pulse */}
+              <motion.span
+                initial={{ opacity: 1 }}
+                animate={{ opacity: [1, 0.5, 1] }}
+                transition={{
+                  duration: 2,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                }}
+                className="relative z-10 text-lg sm:text-xl md:text-2xl"
               >
-              Book a Session
-            </motion.span>
+                Book a Session
+              </motion.span>
 
-            {/* Glow effect behind */}
-            <span className="absolute inset-0 rounded-full bg-yellow-400 opacity-0 blur-md transition-all duration-500 hover:opacity-40"></span>
-          </button>
-        </Link>
-              </motion.h1>
+              {/* Glow effect behind */}
+              <span className="absolute inset-0 rounded-full bg-yellow-400 opacity-0 blur-md transition-all duration-500 hover:opacity-40"></span>
+            </button>
+          </Link>
+        </motion.h1>
       </div>
     </div>
   );
