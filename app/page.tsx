@@ -2,13 +2,8 @@
 import Link from "next/link";
 import Image from "next/image";
 import { motion } from "framer-motion";
-import { Oswald, Exo_2 } from 'next/font/google';
+import {  Exo_2 } from 'next/font/google';
 
-const oswald = Oswald({
-  subsets: ['latin'],
-  weight: ['700'],
-  variable: '--font-heading'
-});
 
 const exo = Exo_2({
   subsets: ['latin'],
