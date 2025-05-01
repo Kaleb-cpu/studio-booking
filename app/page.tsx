@@ -53,9 +53,7 @@ export default function HomePage() {
             transition={{ duration: 1.2, delay: 0.3 }}
             className="absolute -bottom-24 left-0 right-0 text-center scale-y-[-1] opacity-40 bg-gradient-to-t from-black to-transparent bg-clip-text"
           >
-            <h1 className={`${oswald.variable} text-5xl sm:text-7xl font-extrabold text-transparent`}>
-              WELCOME TO
-            </h1>
+            
           </motion.div>
 
           {/* Main Title with Glitch Effect */}
