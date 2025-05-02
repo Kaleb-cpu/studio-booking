@@ -5,7 +5,6 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { calculatePrice } from "@/lib/calculatePrice";
 import BookingCalendar from "@/components/BookingCalendar";
-import NavBar from "./NavBar";
 import { motion } from "framer-motion";
 
 const generateTimeSlots = () => {

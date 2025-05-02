@@ -1,5 +1,5 @@
 // app/how-to-pay/page.tsx
-import { CheckBadgeIcon, ClockIcon, ArrowPathIcon } from '@heroicons/react/24/outline';
+import { CheckBadgeIcon, ClockIcon } from '@heroicons/react/24/outline';
 
 export default function PaymentPage() {
   return (
