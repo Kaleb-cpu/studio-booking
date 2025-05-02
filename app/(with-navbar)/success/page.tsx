@@ -123,6 +123,13 @@ const durationMinutes = service === "final"
           <h2 className="text-xl font-semibold text-green-400 mb-4">
             {service === "final" ? "Final Vocal Recording" : "Demo Recording"} Details
           </h2>
+
+          {/* Add to success page (near top)*/}
+<div className="text-center mb-4">
+  <span className="bg-zinc-700 text-green-400 px-3 py-1 rounded-full text-sm font-mono">
+    Booking BT-{Math.random().toString(36).substring(2, 8).toUpperCase()}
+  </span>
+</div>
           
           <div className="space-y-3 text-zinc-200">
             <div className="grid grid-cols-2 gap-4">
@@ -181,10 +188,14 @@ const durationMinutes = service === "final"
 
         {/* Confirmation message */}
         <p className="text-center text-zinc-400 mb-6">
-          A confirmation has been sent to {email}.<br />
-          Can't wait to create something amazing together!
-        </p>
-
+  A confirmation has been sent to {email}.<br />
+  <span className="block mt-2">
+    For any changes, please call: 
+    <span className="font-semibold text-white ml-1">
+      {phone || "(your contact number)"}
+    </span>
+  </span>
+</p>
         {/* Action buttons */}
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <motion.button

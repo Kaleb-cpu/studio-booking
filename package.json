@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@heroicons/react": "^2.2.0",
     "@parcel/css": "^1.14.0",
     "canvas-confetti": "^1.9.3",
     "cors": "^2.8.5",

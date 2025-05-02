@@ -206,54 +206,39 @@ export default function BookingForm() {
     }
   };
 
-  // Calculate the price for demo or final
   const renderPrice = () => {
     if (service === "null") {
       return (
-        <div className="text-right sm:text-lg font-semibold text-green-400">
-          Estimated Price: $0
+        <div className="text-right text-green-400">
+          <div className="font-semibold">Estimated Price: $0</div>
         </div>
       );
     }
   
-    if (service === "demo") {
-      return (
-        <div className="text-right sm:text-lg font-semibold text-green-400">
+    return (
+      <div className="text-right text-green-400">
+        <div className="font-semibold">
           Estimated Price: ${estimatedPrice}
-          <div className="text-sm mt-2 text-green-500">
-            {songCount <= 1 ? (
-              <>$30 for the first song and 25 after that</>
-            ) : (
-              <>$30 for first song + ${(songCount - 1) * 25} for {songCount - 1} additional song{songCount - 1 !== 1 ? 's' : ''}</>
-            )}
-            <div className="mt-1">You can pay after the session 😊</div>
-          </div>
         </div>
-      );
-    }
-  
-    if (service === "final") {
-      return (
-        <div className="text-right sm:text-lg font-semibold text-green-400">
-          Estimated Price: ${estimatedPrice}
-          <div className="text-sm mt-2 text-green-500">
-            {songCount <= 1 ? (
-              <>$45 for the first hour and $40 after that</>
-            ) : (
-              <>$45 for first hour + ${(songCount - 1) * 40} for {songCount - 1} additional hour{songCount - 1 !== 1 ? 's' : ''}</>
-            )}
-            <div className="mt-1">You can pay after the session 😊</div>
-          </div>
+        <div className="text-sm mt-1 text-green-500">
+          {service === "demo" ? (
+            <div>$30 first song + $25 each additional</div>
+          ) : (
+            <div>$45 first hour + $40 each additional</div>
+          )}
         </div>
-      );
-    }
-  
-    return null;
+        <div className="mt-2 px-2 py-1 bg-green-900/30 border border-green-700 rounded-md inline-block">
+          <span className="font-medium text-green-300">
+            Payment due after session completion
+          </span>
+        </div>
+      </div>
+    );
   };
 
   return (
     <>
-      <NavBar />
+      
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-zinc-900 to-zinc-800 px-4">
         <motion.form
           initial={{ opacity: 0, y: 50 }}
