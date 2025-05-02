@@ -3,7 +3,6 @@ import { JWT } from "google-auth-library";
 import { formatISO } from "date-fns";
 import path from "path";
 import { readFileSync } from "fs";
-import { toZonedTime } from "date-fns-tz";
 
 const SCOPES = ["https://www.googleapis.com/auth/calendar"];
 const calendarId = process.env.GOOGLE_CALENDAR_ID!;
@@ -19,7 +18,6 @@ if (process.env.SERVICE_ACCOUNT_JSON) {
   keyFile = JSON.parse(readFileSync(keyPath, "utf-8"));
 }
 
-
 // Create JWT auth client
 const auth = new JWT({
   email: keyFile.client_email,
@@ -27,41 +25,37 @@ const auth = new JWT({
   scopes: SCOPES,
 });
 
-
 export async function addEventToCalendar({
   name,
   email,
   phone,
   service,
   dateTime,
+  songCount,
 }: {
   name: string;
   email: string;
   phone: string;
   service: string;
   dateTime: string;
+  songCount: number;
 }) {
   const calendar = google.calendar({ version: "v3", auth });
-
-const timeZone = "America/Edmonton";
-
-  const eventStartTime = new Date(dateTime);
-  const eventEndTime = new Date(eventStartTime.getTime() + 60 * 60 * 1000); // 1 hour
+  const timeZone = "America/Edmonton";
   const now = new Date();
+  const eventStartTime = new Date(dateTime);
 
-  // Check 1: Booking is not in the past
+  // Calculate duration based on service type + 15 minute buffer
+  const sessionMinutes = service === "final" ? songCount * 60 : songCount * 30;
+  const totalMinutes = sessionMinutes + 15;
+  const eventEndTime = new Date(eventStartTime.getTime() + totalMinutes * 60000);
+
+  // Basic validation
   if (eventStartTime < now) {
     throw new Error("You cannot book for the past.");
   }
 
-  const zonedStartTime = toZonedTime(eventStartTime, timeZone);
-  const hour = zonedStartTime.getHours();
-  
-  // Check if booking time is within studio hours (9 AM - 8 PM)
-  if (hour < 9 || hour >= 22) {
-    throw new Error("Bookings are only allowed only between 9:00 AM and 8:00 PM.");
-  }
-  // Check if the time slot is already booked
+  // Check for existing events in the calculated time slot
   const existingEvents = await calendar.events.list({
     calendarId,
     timeMin: eventStartTime.toISOString(),
@@ -74,17 +68,17 @@ const timeZone = "America/Edmonton";
     throw new Error("This time slot is already booked.");
   }
 
-// Add Event
+  // Create event with dynamic duration
   const event = {
-    summary: `${service === "final" ? "Final Vocal Recording" : "Demo"} - ${name}`,
+    summary: `${service === "final" ? "Final Vocal Recording" : "Demo"} - ${name} (${songCount} ${songCount === 1 ? 'song' : 'songs'})`,
     description: `Booked by ${name} (${email}) (${phone})`,
     start: {
       dateTime: formatISO(eventStartTime),
-      timeZone: "America/Edmonton",
+      timeZone,
     },
     end: {
       dateTime: formatISO(eventEndTime),
-      timeZone: "America/Edmonton",
+      timeZone,
     },
   };
 

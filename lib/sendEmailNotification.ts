@@ -6,12 +6,14 @@ export async function sendEmailNotification({
   phone,
   service,
   dateTime,
+  songCount, // Add songCount parameter
 }: {
   name: string;
   email: string;
   phone: string;
   service: string;
   dateTime: string;
+  songCount: number; // Add to type definition
 }) {
   const transporter = nodemailer.createTransport({
     service: "gmail",
@@ -31,10 +33,16 @@ export async function sendEmailNotification({
     hour12: true,
   }).format(new Date(dateTime));
 
+  // Calculate session duration for display
+  const durationMinutes = service === "final" ? songCount * 60 : songCount * 30;
+  const hours = Math.floor(durationMinutes / 60);
+  const minutes = durationMinutes % 60;
+  const durationText = `${hours > 0 ? `${hours} hr${hours !== 1 ? 's' : ''}` : ''}${hours > 0 && minutes > 0 ? ' ' : ''}${minutes > 0 ? `${minutes} min${minutes !== 1 ? 's' : ''}` : ''}`;
+
   // Owner Notification - Booking details
   const mailOptionsOwner = {
     from: `"Bethany Recording Studio" <${process.env.EMAIL_USER}>`,
-    to: process.env.NOTIFY_EMAIL, // my own email
+    to: process.env.NOTIFY_EMAIL,
     subject: "New Booking at Bethany Recording Studio",
     text: `Hello,
 
@@ -45,7 +53,9 @@ Name: ${name}
 Email: ${email}
 Phone: ${phone}
 
-Service Requested: ${service}
+Service Requested: ${service === "final" ? "Final Vocal Recording" : "Demo Recording"}
+Number of Songs: ${songCount}
+Estimated Duration: ${durationText}
 
 Date & Time of Session: ${formattedDateTime}
 
@@ -59,20 +69,22 @@ Bethany Recording Studio Team
   // Customer Confirmation - Booking confirmation details
   const mailOptionsCustomer = {
     from: `"Bethany Recording Studio" <${process.env.EMAIL_USER}>`,
-    to: email, // Send confirmation to the customer's email
+    to: email,
     subject: "Booking Confirmation – Bethany Recording Studio",
     text: `Hello ${name},
 
 Thank you for booking a session at Bethany Recording Studio! I am excited to have you. Below are the details of your booking:
 
 ------------------------------------------
-Service Requested: ${service}
+Service Requested: ${service === "final" ? "Final Vocal Recording" : "Demo Recording"}
+Number of Songs: ${songCount}
+Estimated Duration: ${durationText}
 
 Date & Time of Your Session: ${formattedDateTime}
 
 ------------------------------------------
 
-I look forward to providing you with a great recording experience. If you need to make any changes or have any questions, feel free to contact me at (587) - 664 9918.
+I look forward to providing you with a great recording experience. If you need to make any changes or have any questions, feel free to contact me at (587)-664-9918.
 
 See you soon!
 
@@ -83,14 +95,12 @@ Kaleb - Bethany Recording Studio
 
   // Send both emails
   try {
-    // Send email to the owner
     await transporter.sendMail(mailOptionsOwner);
     console.log("Owner notification sent.");
-
-    // Send email to the customer
     await transporter.sendMail(mailOptionsCustomer);
     console.log("Customer confirmation sent.");
   } catch (error) {
     console.error("Error sending emails:", error);
+    throw error; // Re-throw to handle in the calling function
   }
 }

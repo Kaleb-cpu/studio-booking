@@ -4,10 +4,12 @@ import { sendEmailNotification } from "@/lib/sendEmailNotification";
 
 export async function POST(req: NextRequest) {
   try {
-    const { name, email, phone, service, dateTime } = await req.json();
+    // Add songCount to the destructured request body
+    const { name, email, phone, service, dateTime, songCount } = await req.json();
 
-    await addEventToCalendar({ name, email, phone, service, dateTime });
-    await sendEmailNotification({ name, email, phone, service, dateTime });
+    // Pass songCount to both functions
+    await addEventToCalendar({ name, email, phone, service, dateTime, songCount });
+    await sendEmailNotification({ name, email, phone, service, dateTime, songCount });
 
     const res = NextResponse.json({ message: "Booking added to calendar." });
     res.headers.set("Access-Control-Allow-Origin", "*");
@@ -15,7 +17,7 @@ export async function POST(req: NextRequest) {
     res.headers.set("Access-Control-Allow-Headers", "Content-Type");
 
     return res;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
     console.error("Calendar Error:", error);
 
@@ -30,7 +32,6 @@ export async function POST(req: NextRequest) {
     return res;
   }
 }
-
 
 export async function OPTIONS() {
   const res = new NextResponse(null, { status: 204 });

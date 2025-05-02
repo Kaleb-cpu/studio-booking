@@ -8,22 +8,22 @@ import BookingCalendar from "@/components/BookingCalendar";
 import NavBar from "./NavBar";
 import { motion } from "framer-motion";
 
-const TIME_SLOTS = [
-  "08:00 AM",
-  "09:00 AM",
-  "10:00 AM",
-  "11:00 AM",
-  "12:00 PM",
-  "01:00 PM",
-  "02:00 PM",
-  "03:00 PM",
-  "04:00 PM",
-  "05:00 PM",
-  "06:00 PM",
-  "07:00 PM",
-  "08:00 PM",
-  "09:00 PM",
-];
+const generateTimeSlots = () => {
+  const slots: string[] = [];
+  // From 9:00 AM to 9:00 PM (last start time)
+  for (let hour = 9; hour <= 21; hour++) { // 21 = 9 PM in 24h
+    for (let minute = 0; minute < 60; minute += 15) {
+      const formattedHour = hour > 12 ? hour - 12 : hour;
+      const amPm = hour >= 12 ? "PM" : "AM";
+      slots.push(
+        `${formattedHour}:${minute.toString().padStart(2, "0")} ${amPm}`
+      );
+    }
+  }
+  return slots;
+};
+
+const TIME_SLOTS = generateTimeSlots();
 
 export default function BookingForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -124,36 +124,31 @@ export default function BookingForm() {
       if (modifier === "AM" && hours === 12) hours = 0;
   
       const slotStart = new Date(date);
-      slotStart.setHours(hours, minutes, 0, 0); // Set the hour and minute
+      slotStart.setHours(hours, minutes, 0, 0);
   
-      const slotEnd = new Date(slotStart);
-      slotEnd.setHours(slotStart.getHours() + 1); // 1-hour session
+      // ====== KEY CHANGE: Dynamic duration + 15min buffer ======
+      const sessionMinutes = service === "final" ? songCount * 60 : songCount * 30;
+      const totalMinutes = sessionMinutes + 15; // Add 15-minute buffer
+      const slotEnd = new Date(slotStart.getTime() + totalMinutes * 60000);
   
-      // Debugging: Log the slot and busy slots for comparison
-      console.log(
-        "Checking slot:",
-        slotStart.toISOString(),
-        "against busy",
-        busySlots
-      );
-  
+      // Check for conflicts (now includes buffer time)
       const overlap = busySlots.some((busy) => {
         const busyStart = new Date(busy.start);
         const busyEnd = new Date(busy.end);
         return slotStart < busyEnd && slotEnd > busyStart;
       });
   
-      // Only show slots that do not overlap with busy slots
+      // Only show non-overlapping future slots
       const now = new Date();
       if (!overlap && slotStart > now) {
         available.push(slot);
       }
     }
   
-    // If we have available slots, set them, otherwise fallback to showing all
     setAvailableTimeSlots(available.length > 0 ? available : TIME_SLOTS);
   }
-  
+
+
   const handleDateSelection = (date: Date) => {
     setSelectedDate(date);
   };
@@ -164,35 +159,48 @@ export default function BookingForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
+  
     if (!dateTime) {
       return;
     }
-
+  
     setIsSubmitting(true);
-
+  
     try {
       const res = await fetch("/api/book", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name, email, phone, service, dateTime, songCount }),
       });
-
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const data = await res.json();
-
+  
       if (res.ok) {
+        // Reset form fields
         setName("");
         setEmail("");
-        setPhone("")
+        setPhone("");
         setService("null");
         setDateTime("");
         setSongCount(1);
-        router.push("/success");
-      } else {
+  
+        // Create URL with query parameters
+        const params = new URLSearchParams({
+          name: encodeURIComponent(name),
+          email: encodeURIComponent(email),
+          phone: encodeURIComponent(phone || ''), // Handle empty phone
+          service: service || '',
+          songCount: songCount.toString(),
+          dateTime: encodeURIComponent(dateTime)
+        });
+        
+        console.log('Redirecting with params:', params.toString());
+        router.push(`/success?${params.toString()}`);
+      }else {
+        const errorData = await res.json();
+        alert(errorData.error || "Booking failed");
       }
     } catch (error) {
       console.error("Submission error:", error);
+      alert("An error occurred. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
@@ -207,26 +215,39 @@ export default function BookingForm() {
         </div>
       );
     }
-
+  
     if (service === "demo") {
       return (
         <div className="text-right sm:text-lg font-semibold text-green-400">
           Estimated Price: ${estimatedPrice}
           <div className="text-sm mt-2 text-green-500">
-            You can make your payments after the session 😊
+            {songCount <= 1 ? (
+              <>$30 for the first song and 25 after that</>
+            ) : (
+              <>$30 for first song + ${(songCount - 1) * 25} for {songCount - 1} additional song{songCount - 1 !== 1 ? 's' : ''}</>
+            )}
+            <div className="mt-1">You can pay after the session 😊</div>
           </div>
         </div>
       );
     }
-
+  
     if (service === "final") {
       return (
-        <div className="text-right sm:text-lg font-semibold text-red-400">
-          The first hour is $45, and each additional hour is $40.
+        <div className="text-right sm:text-lg font-semibold text-green-400">
+          Estimated Price: ${estimatedPrice}
+          <div className="text-sm mt-2 text-green-500">
+            {songCount <= 1 ? (
+              <>$45 for the first hour and $40 after that</>
+            ) : (
+              <>$45 for first hour + ${(songCount - 1) * 40} for {songCount - 1} additional hour{songCount - 1 !== 1 ? 's' : ''}</>
+            )}
+            <div className="mt-1">You can pay after the session 😊</div>
+          </div>
         </div>
       );
     }
-
+  
     return null;
   };
 
@@ -326,7 +347,11 @@ export default function BookingForm() {
       focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-offset-2 focus:ring-offset-zinc-800
       focus:shadow-[0_0_15px_rgba(34,197,94,0.6)] transition-all duration-300"
     value={service}
-    onChange={(e) => setService(e.target.value)}
+    onChange={(e) => {
+      setService(e.target.value);
+      // Reset song count to 1 when changing service type
+      setSongCount(1);
+    }}
   >
     <option value="null">Pick a service</option>
     <option value="demo">Demo</option>
@@ -334,13 +359,15 @@ export default function BookingForm() {
   </select>
 </div>
 
-{/* Number of Songs or Hours */}
-{service === "demo" && (
+{/* Number of Songs - Show for both demo and final */}
+{(service === "demo" || service === "final") && (
   <div className="relative flex flex-col gap-2">
-    {/* Text above the input */}
-    <span className="text-white text-md mb-2">Enter the amount of songs</span>
+    <span className="text-white text-md mb-2">
+      {service === "demo" 
+        ? "Enter the number of demo songs"
+        : "Enter the number of songs for final recording"}
+    </span>
 
-    {/* Song count input with increment and decrement buttons */}
     <div className="flex items-center gap-2">
       <button
         type="button"
@@ -353,27 +380,37 @@ export default function BookingForm() {
         id="songCount"
         type="number"
         min={1}
-        max={10}
+        max={service === "demo" ? 10 : 5} // Different max for demo vs final
         className="peer w-24 text-center px-4 py-3 bg-zinc-700 text-white rounded-lg placeholder-transparent
           focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-offset-2 focus:ring-offset-zinc-800
           focus:shadow-[0_0_15px_rgba(34,197,94,0.6)] transition-all duration-300"
         value={songCount}
-        onChange={(e) => setSongCount(parseInt(e.target.value))}
-        placeholder="Enter number of songs"
+        onChange={(e) => {
+          const max = service === "demo" ? 10 : 5;
+          const value = Math.min(max, Math.max(1, parseInt(e.target.value) || 1));
+          setSongCount(value);
+        }}
+        placeholder="Number of songs"
         required
       />
       <button
         type="button"
-        onClick={() => setSongCount((prev) => Math.min(10, prev + 1))}
+        onClick={() => {
+          const max = service === "demo" ? 10 : 5;
+          setSongCount((prev) => Math.min(max, prev + 1));
+        }}
         className="px-3 py-2 bg-zinc-600 text-white rounded-lg hover:bg-zinc-500 transition"
       >
         +
       </button>
     </div>
+    {service === "final" && (
+      <p className="text-sm text-zinc-400 mt-1">
+        Note: Each song typically requires 1 hour for final recording
+      </p>
+    )}
   </div>
 )}
-
-
 
 
 
