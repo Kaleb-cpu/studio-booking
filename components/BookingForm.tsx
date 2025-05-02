@@ -21,6 +21,7 @@ const TIME_SLOTS = [
   "05:00 PM",
   "06:00 PM",
   "07:00 PM",
+  "08:00 PM",
   "09:00 PM",
 ];
 
@@ -113,46 +114,46 @@ export default function BookingForm() {
     busySlots: { start: string; end: string }[]
   ) {
     const available: string[] = [];
-
+  
     for (const slot of TIME_SLOTS) {
       const [time, modifier] = slot.split(" ");
       // eslint-disable-next-line prefer-const
       let [hours, minutes] = time.split(":").map(Number);
-
-      
   
-
       if (modifier === "PM" && hours !== 12) hours += 12;
       if (modifier === "AM" && hours === 12) hours = 0;
-
+  
       const slotStart = new Date(date);
-      slotStart.setHours(hours, minutes, 0, 0);
-
+      slotStart.setHours(hours, minutes, 0, 0); // Set the hour and minute
+  
       const slotEnd = new Date(slotStart);
-      slotEnd.setHours(slotStart.getHours() + 1); // 1 hour sessions
+      slotEnd.setHours(slotStart.getHours() + 1); // 1-hour session
+  
+      // Debugging: Log the slot and busy slots for comparison
       console.log(
         "Checking slot:",
         slotStart.toISOString(),
         "against busy",
         busySlots
       );
-
+  
       const overlap = busySlots.some((busy) => {
         const busyStart = new Date(busy.start);
         const busyEnd = new Date(busy.end);
         return slotStart < busyEnd && slotEnd > busyStart;
       });
-
+  
+      // Only show slots that do not overlap with busy slots
       const now = new Date();
-
       if (!overlap && slotStart > now) {
         available.push(slot);
       }
     }
-
-    setAvailableTimeSlots(available);
+  
+    // If we have available slots, set them, otherwise fallback to showing all
+    setAvailableTimeSlots(available.length > 0 ? available : TIME_SLOTS);
   }
-
+  
   const handleDateSelection = (date: Date) => {
     setSelectedDate(date);
   };

@@ -27,7 +27,12 @@ async function getBusySlotsForDate(date: string) {
 
   // Create Edmonton timezone date boundaries
   const startOfDay = DateTime.fromISO(date, { zone: "America/Edmonton" }).startOf('day').toISO();
-  const endOfDay = DateTime.fromISO(date, { zone: "America/Edmonton" }).endOf('day').toISO();
+  const endOfDay = DateTime.fromISO(date, { zone: "America/Edmonton" })
+  .set({ hour: 23, minute: 59, second: 59, millisecond: 999 })
+  .plus({ hours: 1 })
+  .toISO();
+
+
 
   const res = await calendar.freebusy.query({
     requestBody: {

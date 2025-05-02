@@ -3,6 +3,7 @@ import { JWT } from "google-auth-library";
 import { formatISO } from "date-fns";
 import path from "path";
 import { readFileSync } from "fs";
+import { toZonedTime } from "date-fns-tz";
 
 const SCOPES = ["https://www.googleapis.com/auth/calendar"];
 const calendarId = process.env.GOOGLE_CALENDAR_ID!;
@@ -42,6 +43,8 @@ export async function addEventToCalendar({
 }) {
   const calendar = google.calendar({ version: "v3", auth });
 
+const timeZone = "America/Edmonton";
+
   const eventStartTime = new Date(dateTime);
   const eventEndTime = new Date(eventStartTime.getTime() + 60 * 60 * 1000); // 1 hour
   const now = new Date();
@@ -51,14 +54,12 @@ export async function addEventToCalendar({
     throw new Error("You cannot book for the past.");
   }
 
-  const hour = eventStartTime.getHours();
-  if (hour < 9 || hour >= 20) {
-    throw new Error("You can only book between 9 AM and 8 PM.");
-  }
-
+  const zonedStartTime = toZonedTime(eventStartTime, timeZone);
+  const hour = zonedStartTime.getHours();
+  
   // Check if booking time is within studio hours (9 AM - 8 PM)
-  if (hour < 9 || hour >= 20) {
-    throw new Error("Bookings are allowed only between 9:00 AM and 8:00 PM.");
+  if (hour < 9 || hour >= 22) {
+    throw new Error("Bookings are only allowed only between 9:00 AM and 8:00 PM.");
   }
   // Check if the time slot is already booked
   const existingEvents = await calendar.events.list({
