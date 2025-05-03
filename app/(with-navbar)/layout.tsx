@@ -9,7 +9,7 @@ export default function NavbarLayout({
   return (
     <>
       <NavBar />
-      <div className="pt-16"> {/* Add padding to account for fixed navbar */}
+      <div className="pt-16 bg-black"> {/* Add padding to account for fixed navbar */}
         {children}
       </div>
     </>
