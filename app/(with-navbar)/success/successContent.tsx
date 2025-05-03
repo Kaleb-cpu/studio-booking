@@ -100,7 +100,7 @@ export default function SuccessContent() {
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.6 }}
-        className="bg-zinc-800/80 backdrop-blur-md border border-zinc-700 rounded-2xl p-8 max-w-lg w-full shadow-2xl"
+        className="bg-zinc-800/80 backdrop-blur-md border border-zinc-700 rounded-2xl p-8 max-w-3xl w-full shadow-2xl" // Changed max-w-lg to max-w-2xl for more width
       >
         {/* Header with animation */}
         <motion.div
@@ -129,17 +129,17 @@ export default function SuccessContent() {
             </span>
           </div>
           
-          <div className="space-y-3 text-zinc-200">
+          <div className="space-y-4 text-zinc-200"> {/* Increased space-y from 3 to 4 */}
             <div className="grid grid-cols-2 gap-4">
-              <div>
+              <div className="break-words"> {/* Added break-words for long text */}
                 <p className="text-zinc-400 text-sm">Name</p>
                 <p className="font-medium">{name || "Not provided"}</p>
               </div>
-              <div>
+              <div className="break-all"> {/* Added break-all for email specifically */}
                 <p className="text-zinc-400 text-sm">Email</p>
                 <p className="font-medium">{email || "Not provided"}</p>
               </div>
-              <div>
+              <div className="break-words">
                 <p className="text-zinc-400 text-sm">Phone</p>
                 <p className="font-medium">{phone || "Not provided"}</p>
               </div>
@@ -169,7 +169,7 @@ export default function SuccessContent() {
                   </div>
                 </>
               )}
-              <div className="col-span-2">
+              <div className="col-span-2 pt-2"> {/* Added pt-2 for top padding */}
                 <p className="text-zinc-400 text-sm">Estimated Price</p>
                 <p className="font-medium text-xl text-green-400">
                   ${calculatePrice()}
@@ -183,10 +183,10 @@ export default function SuccessContent() {
         </div>
 
         <div className="text-center text-zinc-400 text-sm">
-        <p className="mt-2">
-  Thank you for booking with <br /> 
-  <span className="font-semibold text-amber-300">Bethany Recording Studio</span>
-</p>
+          <p className="mt-4"> {/* Increased mt from 2 to 4 */}
+            Thank you for booking with <br /> 
+            <span className="font-semibold text-amber-300">Bethany Recording Studio</span>
+          </p>
         </div>
       </motion.div>
     </div>
