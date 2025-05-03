@@ -51,7 +51,7 @@ export default function NavBar() {
 
   return (
     <nav
-      className={`bg-gray-950/80 text-gray-100 p-4 fixed w-full top-0 left-0 z-50 border-b border-gray-800/50 backdrop-blur-md hover:backdrop-blur-lg transition-all duration-300 ${
+      className={`bg-gray-950/80 text-gray-100 p-3 fixed w-full top-0 left-0 z-50 border-b border-gray-800/50 backdrop-blur-md hover:backdrop-blur-lg transition-all duration-300 ${
         isScrolled ? "shadow-lg" : ""
       }`}
     >
@@ -61,13 +61,13 @@ export default function NavBar() {
           href="/"
           className="flex items-center gap-2 group text-gray-300 hover:text-amber-100"
         >
-          <div className="relative h-7 w-7 opacity-90 transition-all duration-200 group-hover:opacity-100">
+          <div className="relative h-8.5 w-8.5 opacity-90 transition-all duration-200 group-hover:opacity-100">
             <Image
               src="/logo.png"
               alt="Bethany Recording Studio"
               fill
               className="object-contain transition-all duration-200 group-hover:brightness-110"
-              sizes="28px"
+              sizes="40px"
             />
           </div>
           <span className="hidden sm:inline text-[15px] transition-colors">
@@ -155,7 +155,7 @@ export default function NavBar() {
           {isOpen ? (
             <XMarkIcon className="h-6 w-6 text-amber-400" />
           ) : (
-            <Bars3Icon className="h-6 w-6 text-gray-300 hover:text-amber-400 transition-colors" />
+            <Bars3Icon className="h-7.75 w-7.75 text-gray-200 hover:text-amber-400 transition-colors" />
           )}
         </button>
       </div>
