@@ -1,52 +1,110 @@
 "use client";
 
 import Link from "next/link";
-import { MicrophoneIcon, CreditCardIcon, DocumentTextIcon } from '@heroicons/react/24/outline';
+import { usePathname } from "next/navigation";
+import {
+  MicrophoneIcon,
+  CreditCardIcon,
+  DocumentTextIcon,
+} from "@heroicons/react/24/outline";
+import Image from "next/image";
 
 export default function NavBar() {
+  const pathname = usePathname();
+
+  // Helper function to check active link
+  const isActive = (path: string) => {
+    return pathname === path || 
+           (path !== '/' && pathname.startsWith(path));
+  };
+
   return (
-    <nav className="bg-zinc-900 text-white p-4 shadow-lg fixed w-full top-0 left-0 z-50 border-b border-zinc-700">
+    <nav className="bg-gray-950/80 text-gray-100 p-4 fixed w-full top-0 left-0 z-50 border-b border-gray-800/50 backdrop-blur-md hover:backdrop-blur-lg transition-all duration-300">
       <div className="container mx-auto flex justify-between items-center">
-        {/* Logo/Home Link with Icon */}
-        <Link 
-          href="/" 
-          className="flex items-center gap-2 text-lg font-semibold hover:text-green-400 transition-colors"
-        >
-          <MicrophoneIcon className="h-6 w-6 text-green-400" />
-          <span>Studio Booking</span>
-        </Link>
+        {/* Logo/Home Link */}
+        <Link
+  href="/"
+  className="flex items-center gap-2 group text-gray-300 hover:text-amber-100"
+>
+  {/* Logo container */}
+  <div className="relative h-7 w-7 opacity-90 transition-all duration-200 group-hover:opacity-100">
+    <Image 
+      src="/logo.png" // Update with your logo path
+      alt="Bethany Recording Studio"
+      fill
+      className="object-contain transition-all duration-200 group-hover:brightness-110"
+      sizes="28px"
+    />
+  </div>
+  {/* Optional text */}
+  <span className="hidden sm:inline text-[15px] transition-colors">
+    Home
+  </span>
+</Link>
 
         {/* Navigation Links */}
-        <div className="flex items-center space-x-6">
-          <Link 
-            href="/" 
-            className="hidden sm:inline-block hover:text-green-400 transition-colors px-3 py-1 rounded hover:bg-zinc-800"
+        <div className="flex items-center space-x-3 sm:space-x-5">
+          <Link
+            href="/how-to-pay"
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg group transition-all duration-200 ${
+              isActive('/how-to-pay') 
+                ? 'bg-gray-800/60 text-amber-100'
+                : 'hover:bg-gray-800/40 text-gray-300'
+            }`}
           >
-            Home
-          </Link>
-          
-          <Link 
-            href="/how-to-pay" 
-            className="flex items-center gap-1 hover:text-green-400 transition-colors px-3 py-1 rounded hover:bg-zinc-800"
-          >
-            <CreditCardIcon className="h-5 w-5" />
-            <span className="hidden sm:inline">Payments</span>
-          </Link>
-          
-          <Link 
-            href="/studio-policy" 
-            className="flex items-center gap-1 hover:text-green-400 transition-colors px-3 py-1 rounded hover:bg-zinc-800"
-          >
-            <DocumentTextIcon className="h-5 w-5" />
-            <span className="hidden sm:inline">Policies</span>
+            <CreditCardIcon className={`h-[18px] w-[18px] ${
+              isActive('/how-to-pay') 
+                ? 'text-amber-400' 
+                : 'text-gray-400 group-hover:text-amber-400/90'
+            }`} />
+            <span className="hidden sm:inline text-sm group-hover:text-amber-100">
+              Payments
+            </span>
           </Link>
 
-          <Link 
-            href="/book" 
-            className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition-colors font-medium"
+          <Link
+            href="/studio-policy"
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg group transition-all duration-200 ${
+              isActive('/studio-policy') 
+                ? 'bg-gray-800/60 text-amber-100'
+                : 'hover:bg-gray-800/40 text-gray-300'
+            }`}
           >
-            Book Now
+            <DocumentTextIcon className={`h-[18px] w-[18px] ${
+              isActive('/studio-policy') 
+                ? 'text-amber-400' 
+                : 'text-gray-400 group-hover:text-amber-400/90'
+            }`} />
+            <span className="hidden sm:inline text-sm group-hover:text-amber-100">
+              Policies
+            </span>
           </Link>
+
+          {/* Book Now button */}
+          <div className="relative pl-2">
+            <div className="absolute left-0 top-1/2 -translate-y-1/2 h-3/5 w-px bg-gradient-to-b from-transparent via-amber-600/30 to-transparent"></div>
+            <Link
+              href="/book"
+              className={`relative flex items-center gap-2 ${
+                isActive('/book')
+                  ? 'border-amber-500/40'
+                  : 'bg-gray-900/70 border-amber-600/20'
+              } hover:bg-gray-800/80 border text-white px-4 py-2 rounded-lg font-medium transition-all duration-300 group/button ml-2`}
+            >
+              <MicrophoneIcon className={`h-4 w-4 ${
+                isActive('/book')
+                  ? 'text-amber-300'
+                  : 'text-amber-400 group-hover/button:text-amber-300'
+              } transition-colors`} />
+              <span className="text-sm tracking-wide">Book Now</span>
+              {isActive('/book') && (
+                <div className="absolute inset-0 rounded-lg">
+                  <div className="absolute inset-0 bg-gradient-to-r from-amber-900/10 via-transparent to-amber-900/10"></div>
+                  <div className="absolute bottom-0 left-2 right-2 h-px bg-amber-400/60"></div>
+                </div>
+              )}
+            </Link>
+          </div>
         </div>
       </div>
     </nav>
