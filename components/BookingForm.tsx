@@ -144,7 +144,8 @@ export default function BookingForm() {
       }
     }
   
-    setAvailableTimeSlots(available.length > 0 ? available : TIME_SLOTS);
+    setAvailableTimeSlots(available);
+
   }
 
 

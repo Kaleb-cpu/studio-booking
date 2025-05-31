@@ -24,6 +24,7 @@ export async function sendEmailNotification({
   });
 
   const formattedDateTime = new Intl.DateTimeFormat("en-US", {
+    timeZone: "America/Edmonton", // <- Replace this with your actual time zone
     weekday: "long",
     year: "numeric",
     month: "long",
@@ -32,6 +33,7 @@ export async function sendEmailNotification({
     minute: "2-digit",
     hour12: true,
   }).format(new Date(dateTime));
+  
 
   // Calculate session duration for display
   const durationMinutes = service === "final" ? songCount * 60 : songCount * 30;
