@@ -1,3 +1,4 @@
+
 "use client";
 
 import Link from "next/link";
@@ -9,6 +10,8 @@ import {
   Bars3Icon,
   XMarkIcon,
   HomeIcon,
+  UserIcon,
+  PhoneIcon,
 } from "@heroicons/react/24/outline";
 import Image from "next/image";
 import { useState, useEffect, useRef } from "react";
@@ -49,6 +52,15 @@ export default function NavBar() {
     return pathname === path || (path !== "/" && pathname.startsWith(path));
   };
 
+  const menuItems = [
+    { href: "/", label: "Home", icon: HomeIcon },
+    { href: "/about", label: "About Us", icon: UserIcon },
+    { href: "/services", label: "Services", icon: MicrophoneIcon },
+    { href: "/how-to-pay", label: "Payments", icon: CreditCardIcon },
+    { href: "/studio-policy", label: "Policies", icon: DocumentTextIcon },
+    { href: "/contact", label: "Booking", icon: PhoneIcon },
+  ];
+
   return (
     <nav
       className={`bg-gray-950/80 text-gray-100 p-3 fixed w-full top-0 left-0 z-50 border-b border-gray-800/50 backdrop-blur-md hover:backdrop-blur-lg transition-all duration-300 ${
@@ -77,73 +89,28 @@ export default function NavBar() {
 
         {/* Desktop Navigation Links - Hidden on mobile */}
         <div className="hidden md:flex items-center space-x-3 lg:space-x-5">
-          <Link
-            href="/how-to-pay"
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg group transition-all duration-200 ${
-              isActive("/how-to-pay")
-                ? "bg-gray-800/60 text-amber-100"
-                : "hover:bg-gray-800/40 text-gray-300"
-            }`}
-          >
-            <CreditCardIcon
-              className={`h-[18px] w-[18px] ${
-                isActive("/how-to-pay")
-                  ? "text-amber-400"
-                  : "text-gray-400 group-hover:text-amber-400/90"
-              }`}
-            />
-            <span className="hidden sm:inline text-sm group-hover:text-amber-100">
-              Payments
-            </span>
-          </Link>
-
-          <Link
-            href="/studio-policy"
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg group transition-all duration-200 ${
-              isActive("/studio-policy")
-                ? "bg-gray-800/60 text-amber-100"
-                : "hover:bg-gray-800/40 text-gray-300"
-            }`}
-          >
-            <DocumentTextIcon
-              className={`h-[18px] w-[18px] ${
-                isActive("/studio-policy")
-                  ? "text-amber-400"
-                  : "text-gray-400 group-hover:text-amber-400/90"
-              }`}
-            />
-            <span className="hidden sm:inline text-sm group-hover:text-amber-100">
-              Policies
-            </span>
-          </Link>
-
-          {/* Book Now button */}
-          <div className="relative pl-2">
-            <div className="absolute left-0 top-1/2 -translate-y-1/2 h-3/5 w-px bg-gradient-to-b from-transparent via-amber-600/30 to-transparent"></div>
+          {menuItems.slice(1).map((item) => (
             <Link
-              href="/book"
-              className={`relative flex items-center gap-2 ${
-                isActive("/book")
-                  ? "border-amber-500/40"
-                  : "bg-gray-900/70 border-amber-600/20"
-              } hover:bg-gray-800/80 border text-white px-4 py-2 rounded-lg font-medium transition-all duration-300 group/button ml-2`}
+              key={item.href}
+              href={item.href}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg group transition-all duration-200 ${
+                isActive(item.href)
+                  ? "bg-gray-800/60 text-amber-100"
+                  : "hover:bg-gray-800/40 text-gray-300"
+              }`}
             >
-              <MicrophoneIcon
-                className={`h-4 w-4 ${
-                  isActive("/book")
-                    ? "text-amber-300"
-                    : "text-amber-400 group-hover/button:text-amber-300"
-                } transition-colors`}
+              <item.icon
+                className={`h-[18px] w-[18px] ${
+                  isActive(item.href)
+                    ? "text-amber-400"
+                    : "text-gray-400 group-hover:text-amber-400/90"
+                }`}
               />
-              <span className="text-sm tracking-wide">Book Now</span>
-              {isActive("/book") && (
-                <div className="absolute inset-0 rounded-lg">
-                  <div className="absolute inset-0 bg-gradient-to-r from-amber-900/10 via-transparent to-amber-900/10"></div>
-                  <div className="absolute bottom-0 left-2 right-2 h-px bg-amber-400/60"></div>
-                </div>
-              )}
+              <span className="hidden sm:inline text-sm group-hover:text-amber-100">
+                {item.label}
+              </span>
             </Link>
-          </div>
+          ))}
         </div>
 
         {/* Mobile Hamburger Menu Button */}
@@ -160,74 +127,33 @@ export default function NavBar() {
         </button>
       </div>
 
-      {/* Mobile Menu - Slides in from right */}
+      {/* Mobile Menu - Staircase animation */}
       <div
         ref={menuRef}
         className={`md:hidden fixed top-16 right-0 w-full max-w-xs h-[calc(100vh-4rem)] bg-gray-950/80 backdrop-blur-xl border-l border-gray-800/50 shadow-2xl transition-all duration-300 ease-in-out transform ${
           isOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >
-        <div className="flex flex-col h-full p-6 space-y-4 overflow-y-auto">
-          {/* Added Home Link */}
-          <Link
-            href="/"
-            className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${
-              isActive("/")
-                ? "bg-amber-900/30 text-amber-100"
-                : "hover:bg-gray-800/40 text-gray-300"
-            }`}
-          >
-            <HomeIcon
-              className={`h-5 w-5 ${isActive("/") ? "text-amber-400" : "text-gray-400"}`}
-            />
-            <span className="text-base">Home</span>
-          </Link>
-
-          <Link
-            href="/how-to-pay"
-            className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${
-              isActive("/how-to-pay")
-                ? "bg-amber-900/30 text-amber-100"
-                : "hover:bg-gray-800/40 text-gray-300"
-            }`}
-          >
-            <CreditCardIcon
-              className={`h-5 w-5 ${
-                isActive("/how-to-pay") ? "text-amber-400" : "text-gray-400"
-              }`}
-            />
-            <span className="text-base">Payments</span>
-          </Link>
-
-          <Link
-            href="/studio-policy"
-            className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${
-              isActive("/studio-policy")
-                ? "bg-amber-900/30 text-amber-100"
-                : "hover:bg-gray-800/40 text-gray-300"
-            }`}
-          >
-            <DocumentTextIcon
-              className={`h-5 w-5 ${
-                isActive("/studio-policy") ? "text-amber-400" : "text-gray-400"
-              }`}
-            />
-            <span className="text-base">Policies</span>
-          </Link>
-
-          <div className="pt-2">
+        <div className="flex flex-col h-full p-6 space-y-2 overflow-y-auto">
+          {menuItems.map((item, index) => (
             <Link
-              href="/book"
-              className={`flex items-center justify-center gap-3 px-4 py-3 rounded-xl font-medium transition-all ${
-                isActive("/book")
-                  ? "bg-amber-800/30 text-amber-100 border border-amber-600/30"
-                  : "hover:bg-amber-800/30 text-white border border-amber-700/30"
-              }`}
+              key={item.href}
+              href={item.href}
+              className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${
+                isActive(item.href)
+                  ? "bg-amber-900/30 text-amber-100"
+                  : "hover:bg-gray-800/40 text-gray-300"
+              } staircase-item`}
+              style={{ transitionDelay: `${index * 100}ms` }}
             >
-              <MicrophoneIcon className="h-5 w-5 text-amber-300" />
-              <span className="text-base">Book Now</span>
+              <item.icon
+                className={`h-5 w-5 ${
+                  isActive(item.href) ? "text-amber-400" : "text-gray-400"
+                }`}
+              />
+              <span className="text-base">{item.label}</span>
             </Link>
-          </div>
+          ))}
 
           {/* Optional decorative elements */}
           <div className="mt-auto pt-6 border-t border-gray-800/50">

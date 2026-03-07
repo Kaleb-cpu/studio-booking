@@ -126,58 +126,9 @@ export default function HomePage() {
           transition={{ duration: 1, delay: 1.2 }}
           className="relative"
         >
-          <Link href="/book">
-            <button className="relative z-10 cursor-pointer bg-gradient-to-br from-amber-400 to-yellow-600 text-black font-bold px-12 py-4 text-xl rounded-full shadow-lg overflow-hidden group">
-              <motion.span
-                animate={{
-                  textShadow: [
-                    "0 0 5px rgba(255,255,255,0.3)",
-                    "0 0 15px rgba(255,255,255,0.6)",
-                    "0 0 5px rgba(255,255,255,0.3)",
-                  ],
-                }}
-                transition={{
-                  duration: 2,
-                  repeat: Infinity,
-                }}
-                className="relative z-10"
-              >
-                BOOK A SESSION
-              </motion.span>
-              
-              {/* Holographic Effect */}
-              <div className="absolute inset-0 overflow-hidden rounded-full">
-                <motion.div
-                  animate={{
-                    x: ["-50%", "150%"],
-                    opacity: [0, 0.7, 0],
-                  }}
-                  transition={{
-                    duration: 3,
-                    repeat: Infinity,
-                    delay: 0.5,
-                  }}
-                  className="absolute top-0 left-0 w-1/2 h-full bg-gradient-to-r from-transparent via-white/70 to-transparent"
-                />
-              </div>
-            </button>
-          </Link>
-          
-          {/* Button Halo */}
-          <motion.div
-            animate={{
-              boxShadow: [
-                "0 0 10px 2px rgba(245,158,11,0.5)",
-                "0 0 20px 5px rgba(245,158,11,0.7)",
-                "0 0 10px 2px rgba(245,158,11,0.5)",
-              ],
-            }}
-            transition={{
-              duration: 3,
-              repeat: Infinity,
-            }}
-            className="absolute inset-0 rounded-full -z-10"
-          />
+          <div className="text-xl sm:text-2xl text-amber-300 mt-3 tracking-[0.5em]">
+              YOU CAN REACH ME ON SOCIAL MEDIA
+          </div>
         </motion.div>
 
         {/* Subtle Animated Tagline */}
