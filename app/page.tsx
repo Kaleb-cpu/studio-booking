@@ -1,5 +1,4 @@
 "use client";
-import Link from "next/link";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import {  Exo_2 } from 'next/font/google';
@@ -122,7 +121,7 @@ export default function HomePage() {
         </div>
 
         {/* Holographic Button */}
-        <motion.div
+        {/* <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1, delay: 1.2 }}
@@ -131,14 +130,14 @@ export default function HomePage() {
           <div className="text-xl sm:text-2xl text-amber-300 mt-3 tracking-[0.5em]">
               YOU CAN REACH ME ON SOCIAL MEDIA
           </div>
-        </motion.div>
+        </motion.div> */}
 
         {/* Subtle Animated Tagline */}
         <motion.p
           initial={{ opacity: 0 }}
           animate={{ opacity: 0.7 }}
           transition={{ duration: 2, delay: 1.5 }}
-          className="mt-12 text-sm text-amber-100/70 tracking-widest"
+          className="mt-6 text-sm text-amber-200/70 tracking-widest font-semibold"
         >
           <motion.span
             animate={{ opacity: [0.5, 1, 0.5] }}

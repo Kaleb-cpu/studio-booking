@@ -27,7 +27,7 @@ const ContactPage = () => {
         {/* Header Section */}
         <div className="mb-20">
           <h1 className="text-5xl md:text-7xl font-light tracking-tighter uppercase mb-4">
-            Start Your <span className="text-amber-600 font-medium italic">Session</span>
+            Start Your <span className="text-amber-500 font-medium italic">Session</span>
           </h1>
           <div className="h-[1px] w-24 bg-amber-700 mb-6" />
           <p className="text-stone-400 text-lg max-w-xl font-light leading-relaxed">

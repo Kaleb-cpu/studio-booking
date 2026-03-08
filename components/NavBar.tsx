@@ -1,110 +1,149 @@
 "use client";
+
 import Link from "next/link";
+import { usePathname } from "next/navigation";
+import {
+  MicrophoneIcon,
+  CreditCardIcon,
+  DocumentTextIcon,
+  HomeIcon,
+  UserIcon,
+  PhoneIcon,
+  XMarkIcon,
+} from "@heroicons/react/24/outline";
 import Image from "next/image";
-import { motion } from "framer-motion";
-import { Exo_2 } from 'next/font/google';
-import NavBar from "@/components/NavBar";
+import { useState, useEffect } from "react";
 
-const exo = Exo_2({
-  subsets: ['latin'],
-  variable: '--font-primary'
-});
+export default function NavBar() {
+  const pathname = usePathname();
+  const [isOpen, setIsOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
 
-export default function HomePage() {
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "unset";
+    }
+  }, [isOpen]);
+
+  useEffect(() => { setIsOpen(false); }, [pathname]);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      window.requestAnimationFrame(() => {
+        setIsScrolled(window.scrollY > 20);
+      });
+    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  const menuItems = [
+    { href: "/", label: "Home", icon: HomeIcon },
+    { href: "/services", label: "Services", icon: MicrophoneIcon },
+    { href: "/booking", label: "Booking", icon: PhoneIcon },
+    { href: "/about", label: "About Us", icon: UserIcon },
+    { href: "/how-to-pay", label: "Payments", icon: CreditCardIcon },
+    { href: "/studio-policy", label: "Policies", icon: DocumentTextIcon },
+  ];
+
   return (
-    <div className="relative h-screen w-full overflow-hidden bg-black">
-      <NavBar />
-
-      {/* NEW: Subtle Amber Light Leak Gradient */}
-      {/* This layer sits above the image but below the text to create the "light" */}
-      <div className="absolute inset-0 z-[5] pointer-events-none bg-[radial-gradient(circle_at_center,_rgba(251,191,36,0.15)_0%,_transparent_70%)]" />
-      
-      {/* NEW: Bottom-up Amber Wash */}
-      <div className="absolute inset-0 z-[5] pointer-events-none bg-gradient-to-t from-amber-950/20 via-transparent to-transparent" />
-
-      {/* Background Image Logic */}
-      <motion.div
-        initial={{ scale: 1.1, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        transition={{ duration: 3, ease: "easeOut" }}
-        className="absolute inset-0 z-0"
-      >
-        <Image
-          src="/studio.jpg"
-          alt="Studio background"
-          fill
-          className="object-cover brightness-[0.2] contrast-[1.1]"
-          priority
-          quality={100}
-          style={{
-            transform: "translateZ(0)",
-          }}
-        />
-      </motion.div>
-
-      {/* Foreground Content */}
-      <div className="relative z-10 flex flex-col items-center justify-center h-full text-center px-4">
-        
-        {/* Title Section */}
-        <div className="relative mb-12">
-          <motion.h1
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1.2, delay: 0.5 }}
-            className="text-5xl sm:text-7xl font-extrabold mb-4 relative"
-          >
-            <span className="text-amber-400 drop-shadow-[0_0_25px_rgba(245,158,11,0.5)]">
-              WELCOME TO
-            </span>
-          </motion.h1>
-
-          <motion.h2
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 1.5, delay: 0.8 }}
-            className={`text-4xl sm:text-6xl font-bold ${exo.className} relative pb-4`}
-          >
-            <span className="text-white tracking-tight">
-              BETHANY
-            </span>
-            <motion.div
-              initial={{ scaleX: 0 }}
-              animate={{ scaleX: 1 }}
-              transition={{ duration: 1.5, delay: 1.2, type: "spring" }}
-              className="absolute bottom-0 left-0 right-0 h-1 bg-amber-400 origin-left shadow-[0_0_15px_rgba(245,158,11,0.8)]"
-            />
-            <div className="text-xl sm:text-2xl text-amber-300/90 mt-3 tracking-[0.5em] font-light">
-              RECORDING STUDIO
+    <>
+      <nav className="fixed top-0 left-0 w-full z-[150] py-3 transition-all duration-500 backdrop-blur-sm border-b border-white/5">
+        <div className="container mx-auto px-8 flex justify-between items-center">
+          <Link href="/" className="flex items-center gap-3 group">
+            <div className="relative h-10 w-10 md:h-12 md:w-12 transition-transform duration-300 group-hover:scale-105">
+              <Image src="/logo.png" alt="Logo" fill className="object-contain" priority />
             </div>
-          </motion.h2>
-        </div>
+            <div className="flex flex-col">
+              <span className="text-white font-bold tracking-[0.2em] text-xs uppercase leading-none">House Of</span>
+              <span className="text-amber-400 text-[15px, bold] uppercase tracking-[0.3em] mt-1 opacity-80 font-bold">Bethany</span>
+            </div>
+          </Link>
 
-        {/* Social Link Text */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 1, delay: 1.5 }}
-        >
-          <div className="text-sm sm:text-base text-amber-100/60 mt-3 tracking-[0.3em] uppercase">
-            Connect with us on social media
-          </div>
-        </motion.div>
-
-        {/* Scripture Tagline */}
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 0.8 }}
-          transition={{ duration: 2, delay: 2 }}
-          className="mt-16 text-[10px] sm:text-xs text-amber-200/50 tracking-[0.6em] uppercase"
-        >
-          <motion.span
-            animate={{ opacity: [0.4, 1, 0.4] }}
-            transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+          <button
+            onClick={() => setIsOpen(!isOpen)}
+            className="relative z-[160] group flex flex-col items-end justify-center w-10 h-10 gap-1.5 focus:outline-none"
           >
-            ONE THING IS NEEDED &bull; LUKE 10:42
-          </motion.span>
-        </motion.p>
+            {isOpen ? (
+              <XMarkIcon className="h-7 w-7 text-amber-500" />
+            ) : (
+              <>
+                <div className="w-8 h-[2px] bg-amber-500 transition-all duration-300" />
+                <div className="w-5 h-[2px] bg-white transition-all duration-300 group-hover:w-8" />
+                <div className="w-3 h-[2px] bg-amber-900 transition-all duration-300 group-hover:w-8" />
+              </>
+            )}
+          </button>
+        </div>
+      </nav>
+
+      {/* OVERLAY SYSTEM */}
+      <div className={`fixed inset-0 z-[140] transition-all duration-500 ${
+        isOpen ? "opacity-100 visible" : "opacity-0 invisible pointer-events-none"
+      }`}>
+        
+        {/* 1. BACKDROP: This captures clicks on the entire screen */}
+        <div 
+          className="absolute inset-0 bg-black transition-opacity duration-700"
+          style={{
+            background: `radial-gradient(circle at 85% 50%, rgba(69, 26, 3, 0.45) 0%, rgba(0, 0, 0, 1) 85%)`
+          }}
+          onClick={() => setIsOpen(false)} 
+        />
+
+        {/* 2. INTERACTION LAYER: Contains the links, but passes clicks through to backdrop if you miss a link */}
+        <div 
+          className={`absolute inset-0 flex items-center justify-end pr-[10vw] transition-transform duration-700 ease-[cubic-bezier(0.23,1,0.32,1)] will-change-transform pointer-events-none ${
+            isOpen ? "translate-x-0" : "translate-x-full"
+          }`}
+          onClick={() => setIsOpen(false)} // Secondary click-to-close on this layer
+        >
+          {/* 3. THE ACTUAL MENU: Re-enables pointer events so links work */}
+          <div 
+            className="relative flex flex-col items-end gap-6 pointer-events-auto"
+            onClick={(e) => e.stopPropagation()} // Prevents closing when clicking a link
+          >
+            {menuItems.map((item, index) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={`group flex items-center gap-5 transition-all duration-500 ease-out transform will-change-transform ${
+                  isOpen ? "translate-x-0 opacity-100" : "translate-x-12 opacity-0"
+                }`}
+                style={{ 
+                  transitionDelay: isOpen ? `${100 + index * 40}ms` : "0ms",
+                  marginRight: `${index * 1.5}rem` 
+                }}
+              >
+                <div className="flex flex-col items-end">
+                  <span className={`text-sm font-light tracking-[0.2em] transition-all duration-300 uppercase ${
+                    pathname === item.href 
+                      ? "text-amber-500 font-semibold" 
+                      : "text-stone-300 group-hover:text-white"
+                  }`}>
+                    {item.label}
+                  </span>
+                  <div className={`h-[1px] bg-amber-500 transition-all duration-500 ${
+                    pathname === item.href ? "w-full" : "w-0 group-hover:w-full"
+                  }`} />
+                </div>
+                
+                <div className={`p-3 rounded-full border border-stone-800 bg-black transition-all duration-300 ${
+                  pathname === item.href 
+                    ? "border-amber-500 bg-amber-950/40 shadow-[0_0_15px_rgba(245,158,11,0.3)]" 
+                    : "group-hover:border-amber-500/60 group-hover:bg-stone-900"
+                }`}>
+                  <item.icon className={`h-6 w-6 ${
+                    pathname === item.href ? "text-amber-400" : "text-stone-400 group-hover:text-amber-400"
+                  }`} />
+                </div>
+              </Link>
+            ))}
+          </div>
+        </div>
       </div>
-    </div>
+    </>
   );
 }

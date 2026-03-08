@@ -39,7 +39,7 @@ export default function ServicesPage() {
     <div className="bg-gray-900 text-white min-h-screen">
       <div className="container mx-auto px-4 py-16">
         <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold tracking-tight sm:text-6xl"> Services</h1>
+          <h1 className="text-4xl font-bold tracking-tight sm:text-6xl text-amber-600"> Services</h1>
           <p className="mt-4 text-lg leading-8 text-gray-300">
             We offer a range of services to help you create powerful and professional worship music.
           </p>
