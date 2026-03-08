@@ -1,3 +1,5 @@
+"use client";
+
 import { 
   ChatBubbleLeftRightIcon, 
   ArrowUpRightIcon 
@@ -31,8 +33,7 @@ const ContactPage = () => {
           </h1>
           <div className="h-[1px] w-24 bg-amber-700 mb-6" />
           <p className="text-stone-400 text-lg max-w-xl font-light leading-relaxed">
-            Ready to record? I handle all bookings personally through social media to ensure 
-            we're the right fit for your project.
+            {"Ready to record? I handle all bookings personally through social media to ensure we're the right fit for your project."}
           </p>
         </div>
 
@@ -78,7 +79,7 @@ const ContactPage = () => {
         {/* Studio Location Note */}
         <div className="mt-24 text-center">
             <p className="text-[10px] uppercase tracking-[0.5em] text-stone-600">
-                Bethany Recording Studio &bull; Quality over everything
+              Bethany Recording Studio &bull; Quality over everything
             </p>
         </div>
       </div>

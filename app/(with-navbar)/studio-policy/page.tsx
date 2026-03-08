@@ -38,7 +38,7 @@ export default function PolicyPage() {
                   <div>
                     <p className="text-stone-300 font-medium">24-Hour Notice</p>
                     <p className="text-stone-500 text-sm leading-relaxed">
-                      We require a minimum of 24 hours notice for all cancellations to respect our engineers' schedules.
+                      We require a minimum of 24 hours notice for all cancellations to respect our engineers&apos; schedules.
                     </p>
                   </div>
                 </div>

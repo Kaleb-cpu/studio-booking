@@ -17,7 +17,6 @@ import { useState, useEffect } from "react";
 export default function NavBar() {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
-  const [isScrolled, setIsScrolled] = useState(false);
 
   useEffect(() => {
     if (isOpen) {
@@ -29,22 +28,12 @@ export default function NavBar() {
 
   useEffect(() => { setIsOpen(false); }, [pathname]);
 
-  useEffect(() => {
-    const handleScroll = () => {
-      window.requestAnimationFrame(() => {
-        setIsScrolled(window.scrollY > 20);
-      });
-    };
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
   const menuItems = [
     { href: "/", label: "Home", icon: HomeIcon },
     { href: "/services", label: "Services", icon: MicrophoneIcon },
     { href: "/booking", label: "Booking", icon: PhoneIcon },
-    { href: "/about", label: "About Us", icon: UserIcon },
     { href: "/how-to-pay", label: "Payments", icon: CreditCardIcon },
+    { href: "/about", label: "About Us", icon: UserIcon },
     { href: "/studio-policy", label: "Policies", icon: DocumentTextIcon },
   ];
 
