@@ -3,6 +3,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import {  Exo_2 } from 'next/font/google';
+import NavBar from "@/components/NavBar";
 
 
 const exo = Exo_2({
@@ -13,6 +14,7 @@ const exo = Exo_2({
 export default function HomePage() {
   return (
     <div className="relative h-screen w-full overflow-hidden">
+      <NavBar />
       {/* Your Original Background (Unchanged) */}
       <motion.div
   initial={{ scale: 1, opacity: 0 }}
