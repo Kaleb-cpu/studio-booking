@@ -39,10 +39,10 @@ export default function NavBar() {
 
   return (
     <>
-      <nav className="fixed top-0 left-0 w-full z-[150] py-3 transition-all duration-500 backdrop-blur-sm border-b border-white/5">
+      <nav className="fixed top-0 left-0 w-full z-[150] py-7 transition-all duration-500 backdrop-blur-sm border-b border-white/5">
         <div className="container mx-auto px-8 flex justify-between items-center">
-          <Link href="/" className="flex items-center gap-3 group">
-            <div className="relative h-10 w-10 md:h-12 md:w-12 transition-transform duration-300 group-hover:scale-105">
+          <Link href="/" className="flex items-center gap-1 group">
+            <div className="relative h-13 w-13 md:h-14 md:w-14 transition-transform duration-300 group-hover:scale-105">
               <Image src="/logo.png" alt="Logo" fill className="object-contain" priority />
             </div>
             <div className="flex flex-col">

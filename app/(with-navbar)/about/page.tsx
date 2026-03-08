@@ -1,6 +1,7 @@
 "use client";
+
 import Image from "next/image";
-import { useRef } from "react";
+import { useRef, useState, useEffect } from "react";
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/solid";
 import Link from "next/link";
 import { 
@@ -11,6 +12,53 @@ import {
   ArrowRightIcon,
   MusicalNoteIcon,
 } from "@heroicons/react/24/outline";
+
+/**
+ * GalleryItem Component
+ * Handles individual image visibility logic using Intersection Observer
+ */
+function GalleryItem({ src, index }: { src: string; index: number }) {
+  const [isVisible, setIsVisible] = useState(false);
+  const itemRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        // Trigger focus when at least 40% of the image is in view
+        setIsVisible(entry.isIntersecting);
+      },
+      { 
+        threshold: 0.4,
+        rootMargin: "0px -10% 0px -10%" // Slight margin to ensure focus is central
+      }
+    );
+
+    if (itemRef.current) observer.observe(itemRef.current);
+    return () => observer.disconnect();
+  }, []);
+
+  return (
+    <div 
+      ref={itemRef}
+      className="flex-none w-[calc(50%-8px)] md:w-[calc(25%-12px)] snap-start aspect-[4/5] bg-stone-900 border border-stone-800/50 rounded-xl overflow-hidden relative shadow-2xl transition-all duration-700 ease-out"
+    >
+      <Image 
+        src={src} 
+        alt={`Construction phase ${index + 1}`} 
+        fill 
+        className={`object-cover transition-all duration-1000 ease-in-out ${
+          isVisible 
+            ? "opacity-100 grayscale-0 scale-100" 
+            : "opacity-20 grayscale scale-95"
+        }`}
+      />
+      {/* Subtle accent border that glows when active */}
+      <div className={`absolute inset-0 border border-amber-500/20 rounded-xl transition-opacity duration-1000 ${
+        isVisible ? "opacity-100" : "opacity-0"
+      }`} />
+    </div>
+  );
+}
 
 export default function AboutPage() {
   const constructionImages = [
@@ -38,7 +86,7 @@ export default function AboutPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-950 pt-32 pb-20 px-6 text-stone-300">
+    <div className="min-h-screen bg-gray-950 pt-32 pb-20 px-6 text-stone-300 selection:bg-amber-900/30">
       <div className="max-w-4xl mx-auto relative">
         
         {/* Header - The Narrative */}
@@ -57,16 +105,16 @@ export default function AboutPage() {
               <SparklesIcon className="w-4 h-4" /> The Spark
             </div>
             <h2 className="text-3xl md:text-4xl font-light text-white mb-6 uppercase tracking-tight">A Hobby <br/><span className="italic font-serif">Became a Heartbeat</span></h2>
-            <p className="font-light leading-relaxed mb-8">
+            <p className="font-light leading-relaxed mb-8 text-stone-400">
               {"It started in high school—producing music just for the fun of it, chasing sounds in my bedroom. But everything shifted the moment I sat behind the keyboard. I didn't just like music anymore; I fell in love with it. That curiosity turned into a drive for excellence."}
             </p>
           </div>
           <div className="w-full md:w-72 aspect-square bg-stone-900 rounded-2xl overflow-hidden border border-stone-800 relative shadow-2xl">
              <Image 
-             src="/early-days.PNG" 
-             alt="Me starting out in high school"
-             fill
-             className="object-cover opacity-80 hover:opacity-100 transition-opacity duration-700"
+               src="/early-days.PNG" 
+               alt="Me starting out in high school"
+               fill
+               className="object-cover opacity-80 hover:opacity-100 transition-opacity duration-700"
              />
           </div>
         </section>
@@ -78,26 +126,26 @@ export default function AboutPage() {
               <AcademicCapIcon className="w-4 h-4" /> The Craft
             </div>
             <h2 className="text-3xl md:text-4xl font-light text-white mb-6 uppercase tracking-tight">Refining <br/><span className="italic font-serif">The Technical</span></h2>
-            <p className="font-light leading-relaxed mb-4">
+            <p className="font-light leading-relaxed mb-4 text-stone-400">
               {"Love wasn't enough; I wanted to master the airwaves. I committed to the craft, earning my "} <span className="text-white border-b border-amber-900">Diploma in Audio Production and Engineering</span>. 
             </p>
-            <p className="font-light leading-relaxed">
+            <p className="font-light leading-relaxed text-stone-400">
               {"This journey from a bedroom producer to a certified engineer taught me that every frequency has a purpose and every mix deserves professional excellence."}
             </p>
           </div>
           <div className="w-full md:w-72 aspect-square bg-stone-900 rounded-2xl overflow-hidden border border-stone-800 relative shadow-2xl">
              <Image 
-             src="/kaleb-studioA.jpg" 
-             alt="Professional audio engineering work"
-             fill
-             className="object-cover opacity-80 hover:opacity-100 transition-opacity duration-700"
+               src="/kaleb-studioA.JPG" 
+               alt="Professional audio engineering work"
+               fill
+               className="object-cover opacity-80 hover:opacity-100 transition-opacity duration-700"
              />
           </div>
         </section>
 
         {/* 3. THE TURNING POINT: CONVICTION */}
         <section className="relative mb-40">
-          <div className="bg-stone-900/60 backdrop-blur-sm border border-amber-900/20 rounded-[3rem] p-8 md:p-20 text-center shadow-3xl">
+          <div className="bg-stone-900/40 backdrop-blur-sm border border-amber-900/20 rounded-[3rem] p-8 md:p-20 text-center shadow-3xl">
             <HeartIcon className="w-10 h-10 text-amber-600 mx-auto mb-8" />
             <h2 className="text-amber-700 uppercase tracking-[0.4em] text-[10px] font-bold mb-10">2024: The Conviction</h2>
             <blockquote className="max-w-2xl mx-auto">
@@ -106,7 +154,7 @@ export default function AboutPage() {
               </p>
               <cite className="text-stone-500 text-xs uppercase tracking-widest not-italic">— Abbie Gamboa, <span className="text-amber-800">&quot;Pure&quot;</span></cite>
             </blockquote>
-            <p className="mt-14 max-w-xl mx-auto font-light text-lg text-stone-300 leading-relaxed">
+            <p className="mt-14 max-w-xl mx-auto font-light text-lg text-stone-400 leading-relaxed">
               {"In 2024, the \"Why\" changed. I felt a heavy conviction to build a sanctuary—a place where believers could worship without hidden motives. Music transitioned from a talent I owned to a gift I lay at the feet of Jesus."}
             </p>
           </div>
@@ -119,24 +167,33 @@ export default function AboutPage() {
               <UsersIcon className="w-4 h-4" /> Together
             </div>
             <h2 className="text-3xl md:text-4xl font-light text-white mb-6 uppercase tracking-tight">The Hands Behind <br/><span className="italic font-serif">The Walls</span></h2>
-            <p className="font-light leading-relaxed mb-6">
+            <p className="font-light leading-relaxed mb-6 text-stone-400">
               {"Bethany Recording Studio was physically brought to life in 2024. My brother "} <span className="text-white font-medium">Josh</span> {"has been there every step of the way, helping build this vision from the ground up with his own hands."}
             </p>
-            <p className="font-light leading-relaxed">
+            <p className="font-light leading-relaxed text-stone-400">
               {"Alongside my brothers and sisters in Calgary, we stand together in this shared conviction: to create a home for pure worship in our city."}
             </p>
           </div>
-          <div className="w-full md:w-80 aspect-[4/5] bg-stone-900 rounded-2xl overflow-hidden border border-stone-800 relative shadow-2xl">
+          {/* PHOTO CONTAINER WITH OVERLAY LOGIC */}
+          <div className="w-full md:w-80 aspect-[4/5] bg-stone-900 rounded-2xl overflow-hidden border border-stone-800 relative shadow-2xl group/photo">
              <Image 
-             src="/josh-kaleb.jpg" 
-             alt="Me and Josh building the studio"
-             fill
-             className="object-cover"
+               src="/josh-kaleb.JPG" 
+               alt="Me and Josh building the studio"
+               fill
+               className="object-cover"
              />
+             
+             {/* THE DARK OVERLAY */}
+             {/* Initial state: background-black/70 (dark) */}
+             {/* Interaction state: group-hover/photo:background-black/20 (lighter) */}
+             <div className="absolute inset-0 bg-black/70 transition-colors duration-700 ease-in-out group-hover/photo:bg-black/20" />
+             
+             {/* Optional: Subtle amber glow border that appears on interaction */}
+             <div className="absolute inset-0 border-2 border-amber-500/0 rounded-2xl transition-colors duration-700 group-hover/photo:border-amber-500/20" />
           </div>
         </section>
 
-        {/* --- GALLERY SECTION START --- */}
+        {/* --- DYNAMIC GALLERY SECTION --- */}
         <section className="mb-40 relative group">
           <div className="flex items-end justify-between mb-10 px-2">
             <div>
@@ -162,19 +219,12 @@ export default function AboutPage() {
             </div>
           </div>
 
-          <div ref={scrollRef} className="flex gap-4 overflow-x-hidden scroll-smooth snap-x snap-mandatory">
+          <div 
+            ref={scrollRef} 
+            className="flex gap-4 overflow-x-auto scroll-smooth snap-x snap-mandatory touch-pan-x no-scrollbar pb-4"
+          >
             {constructionImages.map((src, i) => (
-              <div 
-                key={i} 
-                className="flex-none w-[calc(50%-8px)] md:w-[calc(25%-12px)] snap-start aspect-[4/5] bg-stone-900 border border-stone-800/50 rounded-xl overflow-hidden relative group/item shadow-2xl"
-              >
-                <Image 
-                  src={src} 
-                  alt={`Construction phase ${i + 1}`} 
-                  fill 
-                  className="object-cover opacity-40 group-hover/item:opacity-100 group-hover/item:scale-105 transition-all duration-700 ease-out grayscale group-hover/item:grayscale-0"
-                />
-              </div>
+              <GalleryItem key={i} src={src} index={i} />
             ))}
           </div>
           
