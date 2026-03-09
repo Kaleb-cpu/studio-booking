@@ -91,7 +91,7 @@ export default function NavBar() {
         >
           {/* 3. THE ACTUAL MENU: Re-enables pointer events so links work */}
           <div 
-            className="relative flex flex-col items-end gap-6 pointer-events-auto"
+            className="relative flex flex-col items-end gap-3 pointer-events-auto"
             onClick={(e) => e.stopPropagation()} // Prevents closing when clicking a link
           >
             {menuItems.map((item, index) => (
