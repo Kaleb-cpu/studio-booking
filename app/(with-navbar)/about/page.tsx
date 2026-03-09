@@ -177,7 +177,7 @@ export default function AboutPage() {
           {/* PHOTO CONTAINER WITH OVERLAY LOGIC */}
           <div className="w-full md:w-80 aspect-[4/5] bg-stone-900 rounded-2xl overflow-hidden border border-stone-800 relative shadow-2xl group/photo">
              <Image 
-               src="/josh-kaleb.JPG" 
+               src="/singing.jpg" 
                alt="Me and Josh building the studio"
                fill
                className="object-cover"
