@@ -104,7 +104,7 @@ export default function AboutPage() {
             <div className="flex items-center gap-3 text-amber-600 font-bold uppercase tracking-widest text-[10px] mb-4">
               <SparklesIcon className="w-4 h-4" /> The Spark
             </div>  ``
-            <h2 className="text-3xl md:text-4xl font-light text-white mb-6 uppercase tracking-tight">The Hobby <br/><span className="italic font-serif">Became a Heartbeat</span></h2>
+            <h2 className="text-3xl md:text-4xl font-light text-white mb-6 uppercase tracking-tight">The Hobby <br/><span className="italic font-serif">That Became a Heartbeat</span></h2>
             <p className="font-light leading-relaxed mb-8 text-stone-400">
               {"It started in high school—producing music just for the fun of it, chasing sounds in my bedroom. But everything shifted the moment I sat behind the keyboard. I didn't just like music anymore; I fell in love with it. That curiosity turned into a drive for excellence."}
             </p>
